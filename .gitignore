@@ -3,7 +3,9 @@ node_modules
 **/dist-electron
 **/release
 **/resources
-**/build
+**/build/*
+!**/build/entitlements.mac.plist
+!**/build/entitlements.mac.inherit.plist
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
