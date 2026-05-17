@@ -1,0 +1,3 @@
+echo "🔍 Validating Biome rules..."
+yarn biome check --staged --no-errors-on-unmatched
+

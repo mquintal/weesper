@@ -1,0 +1,26 @@
+{
+  "name": "@open-bisbis/database",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "biome check src",
+    "clean": "echo 'nothing to clean'",
+    "test": "echo \"no tests implemented to run\"",
+    "test:watch": "vitest",
+    "codegen:pre": "yarn rebuild better-sqlite3",
+    "codegen:post": "yarn workspace admin run electron-rebuild -f -v 41.5.0 -w better-sqlite3 && rm ./dev.db",
+    "codegen": "yarn codegen:pre && tsx scripts/seed-db.ts && kysely-codegen --url ./dev.db --out-file ./src/schema.generated.ts && yarn codegen:post"
+  },
+  "dependencies": {
+    "kysely": "^0.27.3"
+  },
+  "devDependencies": {
+    "better-sqlite3": "^12.9.0",
+    "kysely-codegen": "^0.20.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vitest": "^1.6.0"
+  }
+}

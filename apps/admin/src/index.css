@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "daisyui/daisyui.css";
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-page-in {
+  animation: pageIn 200ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+:is(.list>:not(:last-child).list-row,.list>:not(:last-child) .list-row):after {
+  content: "";
+  border-bottom: var(--border)solid;
+  inset-inline: var(--radius-box);
+  border-color: var(--color-base-300);
+  position: absolute;
+  bottom: 0
+}
