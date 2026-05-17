@@ -1,0 +1,27 @@
+{
+  "name": "@open-bisbis/hooks",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "biome check src",
+    "clean": "echo 'nothing to clean'",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@open-bisbis/ipc": "workspace:*",
+    "@open-bisbis/logger": "workspace:*",
+    "@tanstack/react-query": "^5.100.9",
+    "react": "^19.2.5"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.2.0",
+    "electron": "41.5.0",
+    "jsdom": "^26.0.0",
+    "typescript": "^6.0.3",
+    "vitest": "^1.6.0"
+  }
+}

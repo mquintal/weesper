@@ -1,0 +1,14 @@
+{
+  "name": "@open-bisbis/logger",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "biome check src",
+    "clean": "echo 'nothing to clean'"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
