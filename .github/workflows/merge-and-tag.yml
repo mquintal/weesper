@@ -25,6 +25,9 @@ on:
         default: 'alpha'
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   ci-checks:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -36,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      new_version: ${{ steps.version_bump.outputs.new_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,6 +76,7 @@ jobs:
           fi
 
       - name: Bump Version and Tag
+        id: version_bump
         if: steps.bump_type.outputs.type != 'none'
         run: |
           TYPE=${{ steps.bump_type.outputs.type }}
@@ -102,3 +108,14 @@ jobs:
           
           git tag v$NEW_VERSION
           git push origin v$NEW_VERSION
+          
+          # Set output for release job
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+  release:
+    needs: bump-and-tag
+    if: needs.bump-and-tag.outputs.new_version != ''
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: v${{ needs.bump-and-tag.outputs.new_version }}
+    secrets: inherit
