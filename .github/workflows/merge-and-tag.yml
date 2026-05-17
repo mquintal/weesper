@@ -4,15 +4,35 @@ on:
   pull_request:
     branches: [main]
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - prerelease
+          - preminor
+          - premajor
+      preid:
+        description: 'Prerelease identifier (only used for pre-prefix types, e.g., alpha, beta)'
+        required: false
+        default: 'alpha'
+        type: string
 
 jobs:
   ci-checks:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/ci-checks.yml
 
   bump-and-tag:
     needs: ci-checks
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,16 +46,28 @@ jobs:
       - name: Determine Bump Type
         id: bump_type
         run: |
-          LABELS='${{ join(github.event.pull_request.labels.*.name, ' ') }}'
-          echo "Labels: $LABELS"
-          if [[ $LABELS =~ "\[major\]" || $LABELS =~ "major" ]]; then
-            echo "type=major" >> $GITHUB_OUTPUT
-          elif [[ $LABELS =~ "\[minor\]" || $LABELS =~ "minor" ]]; then
-            echo "type=minor" >> $GITHUB_OUTPUT
-          elif [[ $LABELS =~ "\[patch\]" || $LABELS =~ "patch" ]]; then
-            echo "type=patch" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "type=${{ github.event.inputs.bump_type }}" >> $GITHUB_OUTPUT
           else
-            echo "type=none" >> $GITHUB_OUTPUT
+            LABELS='${{ join(github.event.pull_request.labels.*.name, ' ') }}'
+            echo "Labels: $LABELS"
+            if [[ $LABELS =~ "\[premajor\]" || $LABELS =~ "premajor" ]]; then
+              echo "type=premajor" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[preminor\]" || $LABELS =~ "preminor" ]]; then
+              echo "type=preminor" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[prepatch\]" || $LABELS =~ "prepatch" ]]; then
+              echo "type=prepatch" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[prerelease\]" || $LABELS =~ "prerelease" ]]; then
+              echo "type=prerelease" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[major\]" || $LABELS =~ "major" ]]; then
+              echo "type=major" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[minor\]" || $LABELS =~ "minor" ]]; then
+              echo "type=minor" >> $GITHUB_OUTPUT
+            elif [[ $LABELS =~ "\[patch\]" || $LABELS =~ "patch" ]]; then
+              echo "type=patch" >> $GITHUB_OUTPUT
+            else
+              echo "type=none" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Bump Version and Tag
@@ -45,9 +77,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
+          EXTRA_ARGS=""
+          if [[ "$TYPE" =~ ^pre ]]; then
+            PREID="${{ github.event.inputs.preid }}"
+            if [ -z "$PREID" ]; then
+              PREID="alpha"
+            fi
+            EXTRA_ARGS="--preid=$PREID"
+          fi
+          
           # Bump apps/admin/package.json
           cd apps/admin
-          npm version $TYPE --no-git-tag-version
+          npm version $TYPE $EXTRA_ARGS --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           
           # Bump root package.json to match
