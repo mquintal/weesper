@@ -8,7 +8,7 @@ Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,
   enabled: app.isPackaged,
   debug: false,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0,
   beforeSend(event) {
     // Add recent logs to extra context for errors and fatals
     if (event.level === 'error' || event.level === 'fatal') {

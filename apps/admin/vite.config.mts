@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
           vite: {
             build: {
               sourcemap: true,
-              minify: false,
+              minify: true,
               rollupOptions: {
                 external: ['better-sqlite3'],
               },
@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => {
           vite: {
             build: {
               sourcemap: true,
-              minify: false,
+              minify: true,
             },
             plugins: [sentry],
           },
@@ -73,7 +73,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname, './src'),
-        '@electron': path.resolve(import.meta.dirname, './electron')
+        '@electron': path.resolve(import.meta.dirname, './electron'),
+        'lottie-web': 'lottie-web/build/player/lottie_light.min.js'
       },
     },
     build: {
