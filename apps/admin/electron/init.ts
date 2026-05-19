@@ -98,6 +98,5 @@ app.whenReady().then(async () => {
   activeShortcuts.forEach((row) => {
     registerShortcut(row.id, row.shortcut)
   })
-  await services.llama.start()
-  await services.whisper.start()
+  await Promise.all([services.llama.start(), services.whisper.start()])
 })

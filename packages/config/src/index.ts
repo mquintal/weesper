@@ -58,7 +58,4 @@ export const removeDownloadedLlmHash = (id: string) => {
   delete downloadedLlms[id]
   store.set('downloadedLlms', downloadedLlms)
 }
-
-// store.reset('micGrant', 'selectedLlm', 'selectedModel', 'hasOnboarded')
-
 export { store }

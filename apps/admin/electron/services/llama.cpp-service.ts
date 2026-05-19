@@ -25,7 +25,7 @@ const service = createManagedService<LlamaRequest, string>({
     if (llm && fs.existsSync(llm.path)) {
       return {
         path: llm.path,
-        args: ['-m', llm.path, '--host', '127.0.0.1', '-t', String(getOptimalThreadCount()), '--no-ui', '--offline'],
+        args: ['-m', llm.path, '--host', '127.0.0.1', '-t', String(getOptimalThreadCount()), '--no-webui', '--offline'],
       }
     }
     return null

@@ -24,6 +24,9 @@ jobs:
       - name: Lint
         run: yarn lint
 
+      - name: Knip (Unused Code Check)
+        run: yarn knip
+
       - name: Test
         run: yarn test
 

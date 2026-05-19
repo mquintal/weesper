@@ -2,11 +2,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { app } from 'electron'
 
-export const __dirname = import.meta?.dirname || path.resolve()
-
 // Use app.getAppPath() to get the root of the application
 // In dev, it's the project root. In prod, it's the app.asar root.
-export const APP_ROOT = app.getAppPath()
+const APP_ROOT = app.getAppPath()
 
 export const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'resources')

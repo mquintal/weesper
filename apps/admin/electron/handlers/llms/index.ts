@@ -31,10 +31,3 @@ export const handler = (ipcMain: IpcMain, onSelect?: (item: any) => Promise<void
   registerListLlms(ipcMain, h.list)
   registerSelectLlm(ipcMain, h.select)
 }
-
-export const getSelectedLlm = () => {
-  const selectedLlmId = storage.getSelectedLlm()
-  if (selectedLlmId) {
-    return llms.find((llm) => llm.id === selectedLlmId)
-  }
-}

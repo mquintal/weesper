@@ -4,7 +4,7 @@ import * as v from 'valibot'
 import type { IpcResult } from '../types'
 import { createIpcResultSchema, handleValidationError, wrapIpcHandler } from '../utils'
 
-export const TOPICS = {
+const TOPICS = {
   LIST: 'recordings/list',
   GET: 'recordings/get',
   DELETE: 'recordings/delete',

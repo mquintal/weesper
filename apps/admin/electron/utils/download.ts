@@ -9,12 +9,12 @@ export enum DownloadState {
   Error = 'error',
 }
 
-export type DownloadPayload =
+type DownloadPayload =
   | { state: DownloadState.Progress; progress: number; downloadedBytes: number; totalBytes: number }
   | { state: DownloadState.Finished }
   | { state: DownloadState.Error; error: Error }
 
-export type DownloadCallback = (state: DownloadPayload) => void
+type DownloadCallback = (state: DownloadPayload) => void
 
 /**
  * Downloads a model from a URL to a specific file path.
@@ -26,7 +26,7 @@ export type DownloadCallback = (state: DownloadPayload) => void
  * @param callback - Function called with progress, finish, or error state
  * @returns A function to cancel the download
  */
-export function downloadResource(url: string, destPath: string, callback: DownloadCallback): () => void {
+function downloadResource(url: string, destPath: string, callback: DownloadCallback): () => void {
   // Ensure the directory exists
   const destDir = path.dirname(destPath)
   if (!fs.existsSync(destDir)) {

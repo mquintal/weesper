@@ -1,12 +1,12 @@
 import { logger } from '@open-bisbis/logger'
 import { ServerProcess } from './server-process'
 
-export interface ServiceModelConfig {
+interface ServiceModelConfig {
   path: string
   args: string[]
 }
 
-export interface ServiceConfig<TInput, TOutput> {
+interface ServiceConfig<TInput, TOutput> {
   name: string
   executable: string
   port: number

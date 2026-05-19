@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "include": ["dependencies", "exports", "files", "unlisted", "binaries"],
+  "ignoreBinaries": ["tccutil"],
+  "workspaces": {
+    "apps/admin": {
+      "entry": [
+        "electron/main.ts",
+        "electron/preload.ts"
+      ],
+      "project": ["electron/**/*.{ts,tsx}", "src/**/*.{ts,tsx}"],
+      "ignore": ["**/*.stories.{ts,tsx}"],
+      "ignoreDependencies": ["tailwindcss", "daisyui"]
+    },
+    "packages/*": {
+      "project": ["src/**/*.{ts,tsx}"]
+    }
+  }
+}

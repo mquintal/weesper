@@ -93,8 +93,6 @@ Models for these servers are downloaded dynamically by the user and stored withi
 
 ## License
 
-OpenBisbis is distributed under a **Sustainable Use License** (Fair-code model).
-
 You are free to view, clone, modify, and run this code for personal use or as an internal productivity tool within a company. **However, you may not commercialize the software itself, offer it as a service, or sell it to third parties.**
 
 For the full legal terms, please ensure you review the project's [LICENSE.md](LICENSE.md) file.
