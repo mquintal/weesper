@@ -13,7 +13,7 @@ TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 echo "Cloning ffmpeg to $TEMP_DIR..."
-git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git "$TEMP_DIR"
+git clone -b n8.1.1 --depth 1 https://git.ffmpeg.org/ffmpeg.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 

@@ -12,8 +12,8 @@ TEMP_DIR=$(mktemp -d)
 # Ensure temp directory is removed on exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-echo "Cloning whisper.cpp to $TEMP_DIR..."
-git clone --depth 1 https://github.com/ggml-org/whisper.cpp.git "$TEMP_DIR"
+echo "Cloning whisper.cpp tag v1.8.4 to $TEMP_DIR..."
+git clone --depth 1 --branch v1.8.4 https://github.com/ggml-org/whisper.cpp.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 
