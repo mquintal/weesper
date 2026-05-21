@@ -13,7 +13,7 @@ TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 echo "Cloning llama.cpp to $TEMP_DIR..."
-git clone --depth 1 https://github.com/ggml-org/llama.cpp.git "$TEMP_DIR"
+git clone --depth 1 --branch b9265 https://github.com/ggml-org/llama.cpp.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 

@@ -21,6 +21,7 @@ echo "Configuring ffmpeg with minimal footprint..."
 ./configure \
   --enable-static \
   --disable-shared \
+  --disable-autodetect \
   --disable-everything \
   --enable-decoder=opus \
   --enable-demuxer=matroska \
