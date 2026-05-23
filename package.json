@@ -38,5 +38,5 @@
     "@sentry/node": "10.51.0",
     "@sentry/types": "10.51.0"
   },
-  "version": "0.0.1-alpha.8"
+  "version": "0.0.1-alpha.9"
 }
