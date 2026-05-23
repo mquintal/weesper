@@ -29,3 +29,5 @@ export {
   useShortcuts,
   useUpdateShortcut,
 } from './shortcuts'
+
+export { useCheckForUpdate, useDownloadUpdate, useInstallUpdate, useUpdateProgress, useUpdateStatus } from './updater'

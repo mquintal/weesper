@@ -3,6 +3,7 @@ import { GearIcon, HeartIcon, LayersIcon, MagicWandIcon, PlayIcon } from '@radix
 import classNames from 'classnames'
 import { NavLink, Outlet } from 'react-router'
 import logo from '../assets/logo.svg'
+import { UpdateBanner } from '../components'
 import { Feedback } from './Feedback'
 
 const SidebarLink = ({
@@ -44,6 +45,8 @@ export const Layout = () => {
           />
           <span className="font-black tracking-tighter text-md">Open Bisbis</span>
         </div>
+
+        <UpdateBanner />
 
         <nav className="flex-1">
           <ul className="menu w-full menu-md p-0 gap-2">

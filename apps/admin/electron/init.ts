@@ -14,8 +14,10 @@ import {
   recordingsHandler,
   shortcutsHandler,
   speechToTextHandler,
+  updaterHandler,
 } from './handlers'
 import { services } from './services'
+import { initAutoUpdater } from './services/auto-updater'
 
 let win: BrowserWindow | null
 let widgetWin: BrowserWindow | undefined
@@ -43,6 +45,7 @@ pasteHandler(ipcMain)
 const { registerShortcut, unregisterAllShortcuts, ensureDefaultShortcut } = shortcutsHandler(ipcMain, {
   getWindow: () => widgetWin,
 })
+updaterHandler(ipcMain)
 
 app.on('will-quit', async () => {
   unregisterAllShortcuts()
@@ -98,5 +101,8 @@ app.whenReady().then(async () => {
   activeShortcuts.forEach((row) => {
     registerShortcut(row.id, row.shortcut)
   })
+
+  initAutoUpdater(() => win)
+
   await Promise.all([services.llama.start(), services.whisper.start()])
 })

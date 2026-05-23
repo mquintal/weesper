@@ -99,6 +99,15 @@ export const processAudio = () => {
       })
 
       const wavBuffer = Buffer.concat(ffmpegOutput)
+
+      if (wavBuffer.length === 0) {
+        const errMsg = ffmpegError || ffmpegStderr || 'Unknown error'
+        const exitCode = ffmpegExitCode
+        ffmpegProcess = null
+        ffmpegOutput = []
+        throw new Error(`FFmpeg produced no output (exit code: ${exitCode}). Error: ${errMsg}`)
+      }
+
       ffmpegProcess = null
       ffmpegOutput = []
 
