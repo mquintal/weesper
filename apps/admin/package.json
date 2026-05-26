@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "0.0.1-alpha.10",
+  "version": "0.0.1-alpha.11",
   "private": true,
   "description": "High-performance local transcription powered by AI",
   "author": "Miguel Quintal",
