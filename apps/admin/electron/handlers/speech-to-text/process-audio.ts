@@ -11,11 +11,16 @@ export const processAudio = () => {
   let ffmpegError: string = ''
   const ffmpegPath = path.join(RESOURCES_PATH, 'ffmpeg/ffmpeg')
 
+  let totalChunksWritten = 0
+  let totalBytesWritten = 0
+
   const reset = () => {
     ffmpegOutput = []
     ffmpegStderr = ''
     ffmpegExitCode = null
     ffmpegError = ''
+    totalChunksWritten = 0
+    totalBytesWritten = 0
   }
 
   const runFfmpeg = () => {
@@ -84,11 +89,45 @@ export const processAudio = () => {
     },
     writeChunk: (chunk: ArrayBuffer) => {
       if (ffmpegProcess?.stdin.writable) {
-        ffmpegProcess.stdin.write(Buffer.from(chunk))
+        totalChunksWritten++
+        totalBytesWritten += chunk.byteLength
+
+        const buffer = Buffer.from(chunk)
+        if (totalChunksWritten === 1) {
+          // Log the first 16 bytes of the first chunk to check for valid WebM/Matroska header (1a 45 df a3)
+          const hexHeader = buffer.slice(0, 16).toString('hex')
+          logger.info('FFmpeg writing first audio chunk', {
+            chunkSize: chunk.byteLength,
+            totalChunksWritten,
+            hexHeader,
+            isValidWebMHeader: hexHeader.startsWith('1a45dfa3'),
+          })
+        } else {
+          logger.debug('FFmpeg writing audio chunk', {
+            chunkSize: chunk.byteLength,
+            totalChunksWritten,
+            totalBytesWritten,
+          })
+        }
+
+        ffmpegProcess.stdin.write(buffer)
+      } else {
+        logger.warn('FFmpeg stdin not writable when trying to write chunk', {
+          chunkSize: chunk.byteLength,
+          totalChunksWritten,
+        })
       }
     },
     getAudioBuffer: async () => {
-      if (!ffmpegProcess) return Buffer.alloc(0)
+      if (!ffmpegProcess) {
+        logger.warn('getAudioBuffer called but ffmpegProcess is null')
+        return Buffer.alloc(0)
+      }
+
+      logger.info('getAudioBuffer finalizing FFmpeg input', {
+        totalChunksWritten,
+        totalBytesWritten,
+      })
 
       ffmpegProcess.stdin.end()
 
@@ -99,6 +138,12 @@ export const processAudio = () => {
       })
 
       const wavBuffer = Buffer.concat(ffmpegOutput)
+      logger.info('FFmpeg transcription buffer complete', {
+        wavBufferSize: wavBuffer.length,
+        totalChunksWritten,
+        totalBytesWritten,
+        exitCode: ffmpegExitCode,
+      })
 
       if (wavBuffer.length === 0) {
         const errMsg = ffmpegError || ffmpegStderr || 'Unknown error'

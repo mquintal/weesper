@@ -39,15 +39,35 @@ export const registerStopRecording = (ipc: IpcMain, handler: (shortcutId: string
 // There is no IpcResult for this.
 export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffer) => void) => {
   ipc.on(TOPICS.CHUNK, (_, chunk: unknown) => {
-    // Electron's IPC serialization may deliver the ArrayBuffer as a Buffer,
-    // Uint8Array, or other typed array depending on the platform/version.
-    // We normalize to ArrayBuffer to ensure chunks are never silently dropped.
-    if (chunk instanceof ArrayBuffer) {
+    // Print diagnostic type log to trace serialization across platforms
+    const typeOfChunk = typeof chunk
+    const constructorName = chunk && typeof chunk === 'object' ? (chunk as any).constructor?.name : 'unknown'
+    const isBuffer = Buffer.isBuffer(chunk)
+    const isArrayBuffer = chunk instanceof ArrayBuffer
+    const isView = ArrayBuffer.isView(chunk)
+
+    if (isArrayBuffer) {
       handler(chunk)
-    } else if (Buffer.isBuffer(chunk)) {
-      handler(new Uint8Array(chunk).buffer as ArrayBuffer)
-    } else if (ArrayBuffer.isView(chunk)) {
-      handler(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength).buffer as ArrayBuffer)
+    } else if (isBuffer) {
+      // Node.js Buffers are often views on a shared pooled ArrayBuffer.
+      // We must slice the underlying ArrayBuffer using byteOffset/byteLength to get a clean copy of the chunk data.
+      const typedChunk = chunk as Buffer
+      const buf = typedChunk.buffer as ArrayBuffer
+      handler(buf.slice(typedChunk.byteOffset, typedChunk.byteOffset + typedChunk.byteLength))
+    } else if (isView) {
+      // TypedArrays can also be views on pooled or larger buffers.
+      const typedChunk = chunk as ArrayBufferView
+      const buf = typedChunk.buffer as ArrayBuffer
+      handler(buf.slice(typedChunk.byteOffset, typedChunk.byteOffset + typedChunk.byteLength))
+    } else {
+      console.error('[IPC CHUNK TELEMETRY] Silently dropped invalid recording chunk format!', {
+        typeOfChunk,
+        constructorName,
+        isBuffer,
+        isArrayBuffer,
+        isView,
+        keys: chunk && typeof chunk === 'object' ? Object.keys(chunk) : [],
+      })
     }
   })
 }
