@@ -25,9 +25,7 @@ echo "Configuring ffmpeg with minimal footprint..."
   --disable-everything \
   --enable-decoder=opus \
   --enable-demuxer=matroska \
-  --enable-demuxer=webm \
   --enable-parser=opus \
-  --enable-parser=webm \
   --enable-encoder=pcm_s16le \
   --enable-muxer=wav \
   --enable-protocol=file,pipe \

@@ -19,11 +19,23 @@ export const processAudio = () => {
   }
 
   const runFfmpeg = () => {
-    // -f webm: Use WebM format
+    // -f matroska: WebM is a subset of Matroska, same demuxer in FFmpeg
     // -i pipe:0: Read from stdin
     // -f wav: Output as WAV
     // pipe:1: Write to stdout
-    const process = spawn(ffmpegPath, ['-f', 'webm', '-i', 'pipe:0', '-f', 'wav', '-ar', '16000', '-ac', '1', 'pipe:1'])
+    const process = spawn(ffmpegPath, [
+      '-f',
+      'matroska',
+      '-i',
+      'pipe:0',
+      '-f',
+      'wav',
+      '-ar',
+      '16000',
+      '-ac',
+      '1',
+      'pipe:1',
+    ])
 
     process?.stdout.on('data', (chunk: Buffer) => {
       ffmpegOutput.push(chunk)

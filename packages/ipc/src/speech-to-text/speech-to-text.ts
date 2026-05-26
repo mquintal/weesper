@@ -39,8 +39,15 @@ export const registerStopRecording = (ipc: IpcMain, handler: (shortcutId: string
 // There is no IpcResult for this.
 export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffer) => void) => {
   ipc.on(TOPICS.CHUNK, (_, chunk: unknown) => {
+    // Electron's IPC serialization may deliver the ArrayBuffer as a Buffer,
+    // Uint8Array, or other typed array depending on the platform/version.
+    // We normalize to ArrayBuffer to ensure chunks are never silently dropped.
     if (chunk instanceof ArrayBuffer) {
       handler(chunk)
+    } else if (Buffer.isBuffer(chunk)) {
+      handler(new Uint8Array(chunk).buffer as ArrayBuffer)
+    } else if (ArrayBuffer.isView(chunk)) {
+      handler(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength).buffer as ArrayBuffer)
     }
   })
 }

@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 export const useRecordingManager = () => {
   const [isRecording, setIsRecording] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const sendQueueRef = useRef<Promise<void>>(Promise.resolve())
   const streamRef = useRef<MediaStream | null>(null)
   const isStartingRef = useRef(false)
 
@@ -67,15 +68,23 @@ export const useRecordingManager = () => {
         throw new Error(startResult.data.join('\n'))
       }
 
+      sendQueueRef.current = Promise.resolve()
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: 'audio/webm;codecs=opus',
       })
       mediaRecorderRef.current = mediaRecorder
 
-      mediaRecorder.ondataavailable = async (e) => {
+      mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
-          const buffer = await e.data.arrayBuffer()
-          sendRecordingChunk(window.ipcRenderer, buffer)
+          const chunkBlob = e.data
+          sendQueueRef.current = sendQueueRef.current.then(async () => {
+            try {
+              const buffer = await chunkBlob.arrayBuffer()
+              sendRecordingChunk(window.ipcRenderer, buffer)
+            } catch (err) {
+              console.error('Failed to send recording chunk:', err)
+            }
+          })
         }
       }
 
@@ -108,6 +117,9 @@ export const useRecordingManager = () => {
     return new Promise<void>((resolve, reject) => {
       mediaRecorder.onstop = async () => {
         try {
+          // Wait for all remaining chunks to be processed and sent to IPC first
+          await sendQueueRef.current
+
           const transcribed = await transcribe(shortcutId)
 
           if (transcribed) {

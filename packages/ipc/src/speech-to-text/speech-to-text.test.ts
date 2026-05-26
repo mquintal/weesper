@@ -80,6 +80,34 @@ describe('Speech to Text IPC module', () => {
       expect(mockHandler).toHaveBeenCalledWith(chunk)
     })
 
+    it('registerRecordingChunk handles Buffer chunks from IPC serialization', () => {
+      const mockHandler = vi.fn()
+      registerRecordingChunk(mockIpcMain, mockHandler)
+
+      const callback = mockIpcMain.on.mock.calls[0][1]
+      const chunk = Buffer.from([1, 2, 3, 4])
+      callback({}, chunk)
+
+      expect(mockHandler).toHaveBeenCalledTimes(1)
+      const received = mockHandler.mock.calls[0][0]
+      expect(received).toBeInstanceOf(ArrayBuffer)
+      expect(new Uint8Array(received)).toEqual(new Uint8Array([1, 2, 3, 4]))
+    })
+
+    it('registerRecordingChunk handles Uint8Array chunks from IPC serialization', () => {
+      const mockHandler = vi.fn()
+      registerRecordingChunk(mockIpcMain, mockHandler)
+
+      const callback = mockIpcMain.on.mock.calls[0][1]
+      const chunk = new Uint8Array([5, 6, 7, 8])
+      callback({}, chunk)
+
+      expect(mockHandler).toHaveBeenCalledTimes(1)
+      const received = mockHandler.mock.calls[0][0]
+      expect(received).toBeInstanceOf(ArrayBuffer)
+      expect(new Uint8Array(received)).toEqual(new Uint8Array([5, 6, 7, 8]))
+    })
+
     it('registerPasteText registers topic', async () => {
       const mockHandler = vi.fn().mockResolvedValue(undefined)
       registerPasteText(mockIpcMain, mockHandler)
