@@ -1,4 +1,5 @@
 import { listenToWidgetStatus, listenToWidgetWillHide, type WidgetStatus } from '@open-bisbis/ipc'
+import { logger } from '@open-bisbis/logger'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -102,16 +103,25 @@ const RecordingAnimation = React.memo(
 
     useEffect(() => {
       ref.current?.goToAndStop(10, true)
+
+      logger.info('[Widget Lottie] RecordingAnimation effect triggered', {
+        hasStream: !!stream,
+        isRecording,
+        streamId: stream?.id || null,
+      })
+
       if (!stream || !isRecording) return
 
       const speechEvents = hark(stream, { threshold: -65, interval: 25 })
 
       speechEvents.on('speaking', () => {
+        logger.debug('[Widget Lottie] Speech detected (hark: speaking)')
         // Playing segment between frames 10 and 30
         ref.current?.playSegments([10, 30], true)
       })
 
       speechEvents.on('stopped_speaking', () => {
+        logger.debug('[Widget Lottie] Speech ended (hark: stopped_speaking)')
         ref.current?.goToAndStop(10, true)
       })
 

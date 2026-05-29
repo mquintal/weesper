@@ -42,7 +42,7 @@ export const useUpdateProgress = () => {
 }
 
 export const useCheckForUpdate = () => {
-  return useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: async () => {
       const result = await checkForUpdate(window.ipcRenderer)
       if (result.status === 'error') {
@@ -50,8 +50,15 @@ export const useCheckForUpdate = () => {
         logger.error('[useCheckForUpdate] Error checking for updates', { error: errorMsg })
         throw new Error(errorMsg)
       }
+
+      return result.data.isAvailable
     },
   })
+
+  return {
+    isUpdateAvailable: mutateAsync,
+    isChecking: isPending,
+  }
 }
 
 export const useDownloadUpdate = () => {

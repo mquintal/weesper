@@ -11,7 +11,7 @@ export function createTray(win: BrowserWindow, createWindow: () => void) {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'OpenBisbis',
+      label: 'Open Bisbis',
       click: () => {
         try {
           if (win) {
@@ -27,13 +27,13 @@ export function createTray(win: BrowserWindow, createWindow: () => void) {
     },
     { type: 'separator' },
     {
-      label: 'Quit OpenBisbis',
+      label: 'Quit',
       type: 'normal',
       role: 'quit',
     },
   ])
 
-  tray.setToolTip('OpenBisbis')
+  tray.setToolTip('Open Bisbis')
   tray.setContextMenu(contextMenu)
 
   return tray

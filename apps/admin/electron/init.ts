@@ -17,7 +17,6 @@ import {
   updaterHandler,
 } from './handlers'
 import { services } from './services'
-import { initAutoUpdater } from './services/auto-updater'
 
 let win: BrowserWindow | null
 let widgetWin: BrowserWindow | undefined
@@ -71,6 +70,10 @@ app.whenReady().then(async () => {
     await app.dock?.show()
   }
 
+  app.setAboutPanelOptions({
+    copyright: '',
+  })
+
   // Auto-approve microphone requests if system permission is already granted
   session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
     if (permission === 'media') {
@@ -102,7 +105,7 @@ app.whenReady().then(async () => {
     registerShortcut(row.id, row.shortcut)
   })
 
-  initAutoUpdater(() => win)
+  services.updater.init(() => win)
 
   await Promise.all([services.llama.start(), services.whisper.start()])
 })

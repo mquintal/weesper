@@ -5,6 +5,7 @@ import {
   sendRecordingChunk,
   startRecording as startRecordingIpc,
 } from '@open-bisbis/ipc'
+import { logger } from '@open-bisbis/logger'
 import { useEffect, useRef, useState } from 'react'
 
 export const useRecordingManager = () => {
@@ -13,12 +14,17 @@ export const useRecordingManager = () => {
   const sendQueueRef = useRef<Promise<void>>(Promise.resolve())
   const streamRef = useRef<MediaStream | null>(null)
   const isStartingRef = useRef(false)
+  const startTimestampRef = useRef<number>(0)
+  const chunkCountRef = useRef<number>(0)
+  const chunkBytesRef = useRef<number>(0)
 
   const toggleRecording = (shortcutId: string) => {
     if (transcribing) return
     if (isRecording) {
       setIsRecording(false)
-      stopRecording(shortcutId)
+      stopRecording(shortcutId).catch((err) => {
+        logger.error('[Recording Manager] Failed to stop recording', { error: err?.message || String(err) })
+      })
     } else {
       startRecording()
     }
@@ -43,6 +49,9 @@ export const useRecordingManager = () => {
     if (isStartingRef.current) return
     isStartingRef.current = true
 
+    chunkCountRef.current = 0
+    chunkBytesRef.current = 0
+
     try {
       if (streamRef.current) {
         for (const t of streamRef.current.getTracks()) t.stop()
@@ -56,8 +65,10 @@ export const useRecordingManager = () => {
       let stream: MediaStream
       try {
         stream = await navigator.mediaDevices.getUserMedia(constraints)
-      } catch (err) {
-        console.warn('Failed to get preferred microphone, falling back to default:', err)
+      } catch (err: any) {
+        logger.warn('Failed to get preferred microphone, falling back to default', {
+          error: err?.message || String(err),
+        })
         stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       }
       streamRef.current = stream
@@ -74,24 +85,53 @@ export const useRecordingManager = () => {
       })
       mediaRecorderRef.current = mediaRecorder
 
+      // Diagnostic logging for audio tracks to debug microphone permission issues
+      const tracks = stream.getAudioTracks()
+      const trackDiagnostics = tracks.map((t) => ({
+        label: t.label,
+        enabled: t.enabled,
+        readyState: t.readyState,
+        muted: t.muted,
+        settings: t.getSettings ? t.getSettings() : {},
+      }))
+
+      logger.info('[Media Stream Diagnostics]', {
+        tracks: JSON.stringify(trackDiagnostics),
+        selectedDeviceId: selectedDeviceId || 'default',
+      })
+
+      mediaRecorder.onerror = (e: any) => {
+        logger.error('[MediaRecorder Error]', { error: e.error?.message || String(e) })
+      }
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           const chunkBlob = e.data
+          chunkCountRef.current += 1
+          chunkBytesRef.current += chunkBlob.size
+
+          logger.debug(`[MediaRecorder Chunk] Emitting chunk ${chunkCountRef.current}`, { size: chunkBlob.size })
+
           sendQueueRef.current = sendQueueRef.current.then(async () => {
             try {
               const buffer = await chunkBlob.arrayBuffer()
               sendRecordingChunk(window.ipcRenderer, buffer)
-            } catch (err) {
-              console.error('Failed to send recording chunk:', err)
+            } catch (err: any) {
+              logger.error('Failed to send recording chunk', { error: err?.message || String(err) })
             }
           })
+        } else {
+          logger.warn('[MediaRecorder Chunk] Emitted empty chunk (size 0)')
         }
       }
 
       mediaRecorder.start(500)
+      startTimestampRef.current = Date.now()
       setIsRecording(true)
-    } catch (err) {
-      console.error('Failed to start recording:', err)
+
+      logger.info('[MediaRecorder] Started')
+    } catch (err: any) {
+      logger.error('Failed to start recording', { error: err?.message || String(err) })
       setIsRecording(false)
     } finally {
       isStartingRef.current = false
@@ -105,6 +145,11 @@ export const useRecordingManager = () => {
     mediaRecorderRef.current = null
     setIsRecording(false)
 
+    logger.info('[MediaRecorder] Stop triggered', {
+      totalChunksGenerated: chunkCountRef.current,
+      totalBytesGenerated: chunkBytesRef.current,
+    })
+
     // Stop all tracks
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => {
@@ -114,11 +159,24 @@ export const useRecordingManager = () => {
       streamRef.current = null
     }
 
+    const duration = Date.now() - startTimestampRef.current
+    if (duration < 500) {
+      logger.warn('[Recording Manager] Recording was too short, skipping transcription', { durationMs: duration })
+      // Tell the main process we finished so it can clean up FFmpeg and exit gracefully
+      await transcribe(shortcutId).catch(() => {})
+      return
+    }
+
     return new Promise<void>((resolve, reject) => {
       mediaRecorder.onstop = async () => {
         try {
           // Wait for all remaining chunks to be processed and sent to IPC first
           await sendQueueRef.current
+
+          logger.info('[MediaRecorder] Data all sent, requesting transcription', {
+            totalChunksGenerated: chunkCountRef.current,
+            totalBytesGenerated: chunkBytesRef.current,
+          })
 
           const transcribed = await transcribe(shortcutId)
 
@@ -126,10 +184,10 @@ export const useRecordingManager = () => {
             await pasteText(window.ipcRenderer, transcribed)
           }
 
-          console.log('Transcription result:', transcribed)
+          logger.info('Transcription result complete', { textLength: transcribed?.length || 0 })
           resolve()
-        } catch (err) {
-          console.error('Error during transcription:', err)
+        } catch (err: any) {
+          logger.error('Error during transcription', { error: err?.message || String(err) })
           reject(err)
         }
       }

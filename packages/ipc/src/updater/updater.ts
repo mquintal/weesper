@@ -1,4 +1,5 @@
 import type { IpcMain, IpcRenderer, IpcRendererEvent } from 'electron'
+import type { BrowserWindow } from 'electron/main'
 import * as v from 'valibot'
 import type { IpcResult } from '../types'
 import { createIpcResultSchema, handleValidationError, wrapIpcHandler } from '../utils'
@@ -42,12 +43,12 @@ export type UpdateProgress = v.InferOutput<typeof UpdateProgressSchema>
 
 // --- Main Process Handlers ---
 
-export const registerCheckForUpdate = (ipc: IpcMain, handler: () => void | Promise<void>) => {
+export const registerCheckForUpdate = (ipc: IpcMain, handler: () => Promise<boolean>) => {
   ipc.handle(
     TOPICS.CHECK,
-    wrapIpcHandler(TOPICS.CHECK, async (): Promise<IpcResult<void>> => {
-      await handler()
-      return { status: 'success', data: undefined }
+    wrapIpcHandler(TOPICS.CHECK, async (): Promise<IpcResult<{ isAvailable: boolean }>> => {
+      const isAvailable = await handler()
+      return { status: 'success', data: { isAvailable } }
     }),
   )
 }
@@ -72,11 +73,19 @@ export const registerInstallUpdate = (ipc: IpcMain, handler: () => void | Promis
   )
 }
 
+export const sendStatus = (window: BrowserWindow, status: UpdateStatus) => {
+  window.webContents.send(TOPICS.STATUS, status)
+}
+
+export const sendDownloadProgress = (window: BrowserWindow, progress: UpdateProgress) => {
+  window.webContents.send(TOPICS.PROGRESS, progress)
+}
+
 // --- Renderer Process Invokers ---
 
-export const checkForUpdate = async (ipc: IpcRenderer): Promise<IpcResult<void>> => {
+export const checkForUpdate = async (ipc: IpcRenderer): Promise<IpcResult<{ isAvailable: boolean }>> => {
   const result = await ipc.invoke(TOPICS.CHECK)
-  const validated = v.safeParse(createIpcResultSchema(v.any()), result)
+  const validated = v.safeParse(createIpcResultSchema(v.object({ isAvailable: v.boolean() })), result)
   if (!validated.success) return handleValidationError(validated.issues, result)
   return validated.output
 }

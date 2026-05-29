@@ -1,5 +1,6 @@
+import { sendDownloadProgress, sendStatus as sendUpdateStatus } from '@open-bisbis/ipc'
 import { logger } from '@open-bisbis/logger'
-import { app, type BrowserWindow } from 'electron'
+import { app, type BrowserWindow, Menu, MenuItem } from 'electron'
 import { autoUpdater, type ProgressInfo, type UpdateInfo } from 'electron-updater'
 
 type WindowGetter = () => BrowserWindow | undefined | null
@@ -29,14 +30,14 @@ export const initAutoUpdater = (getWindow: WindowGetter) => {
   ) => {
     const win = getWindow()
     if (win && !win.isDestroyed()) {
-      win.webContents.send('updater/status', { state, ...data })
+      sendUpdateStatus(win, { state, ...data })
     }
   }
 
   const sendProgress = (progress: ProgressInfo) => {
     const win = getWindow()
     if (win && !win.isDestroyed()) {
-      win.webContents.send('updater/progress', {
+      sendDownloadProgress(win, {
         percent: progress.percent,
         bytesPerSecond: progress.bytesPerSecond,
         transferred: progress.transferred,
@@ -68,6 +69,29 @@ export const initAutoUpdater = (getWindow: WindowGetter) => {
 
   autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
     sendStatus('downloaded', { version: info.version })
+
+    if (process.platform === 'darwin') {
+      const appMenu = Menu.getApplicationMenu()
+      if (appMenu) {
+        const firstMenu = appMenu.items[0]?.submenu
+        if (firstMenu) {
+          const exists = firstMenu.items.some((item) => item.label === 'Restart to Update')
+          if (!exists) {
+            firstMenu.insert(
+              1,
+              new MenuItem({
+                label: 'Restart to Update',
+                click: () => {
+                  autoUpdater.quitAndInstall()
+                },
+              }),
+            )
+            firstMenu.insert(2, new MenuItem({ type: 'separator' }))
+            Menu.setApplicationMenu(appMenu)
+          }
+        }
+      }
+    }
   })
 
   autoUpdater.on('error', (err: Error) => {
@@ -81,9 +105,8 @@ export const initAutoUpdater = (getWindow: WindowGetter) => {
         .checkForUpdates()
         .catch((err) => logger.error('[AutoUpdater] initial check failed', { error: err.message }))
     }
-  }, 30_000)
+  }, 30000)
 
-  // Check every 4 hours
   setInterval(
     () => {
       if (app.isPackaged) {
@@ -92,7 +115,7 @@ export const initAutoUpdater = (getWindow: WindowGetter) => {
           .catch((err) => logger.error('[AutoUpdater] periodic check failed', { error: err.message }))
       }
     },
-    4 * 60 * 60 * 1000,
+    1 * 60 * 60 * 1000, // 1 hour
   )
 }
 

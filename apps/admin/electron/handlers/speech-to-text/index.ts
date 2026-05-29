@@ -7,6 +7,7 @@ import {
   updateWidgetStatus,
   widgetWindowWillHide,
 } from '@open-bisbis/ipc'
+import { logger } from '@open-bisbis/logger'
 import type { BrowserWindow, IpcMain } from 'electron'
 import { cleanText } from './clean-text'
 import { processAudio } from './process-audio'
@@ -47,6 +48,13 @@ export const handler = (ipcMain: IpcMain, options: options) => {
       updateWidgetStatus(win, 'transcribing')
 
       const wavBuffer = await getAudioBuffer()
+
+      if (wavBuffer.length === 0) {
+        logger.info('WAV buffer is empty, exiting gracefully without transcribing')
+        updateWidgetStatus(win, 'finished')
+        closeWidgetWithDelay(win, 1000)
+        return ''
+      }
 
       const selectedModel = options.getSelectdModel()
       if (!selectedModel) {

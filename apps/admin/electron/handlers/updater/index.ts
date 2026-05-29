@@ -4,7 +4,7 @@ import { checkForUpdates, downloadUpdate, installUpdate } from '../../services/a
 
 export const handler = (ipcMain: IpcMain) => {
   registerCheckForUpdate(ipcMain, async () => {
-    await checkForUpdates()
+    return (await checkForUpdates())?.isUpdateAvailable ?? false
   })
 
   registerDownloadUpdate(ipcMain, async () => {

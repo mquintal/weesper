@@ -82,6 +82,7 @@
     "appId": "com.openbisbis.app",
     "productName": "Open Bisbis",
     "electronVersion": "41.5.0",
+    "copyright": "",
     "directories": {
       "output": "release/${version}"
     },
@@ -134,7 +135,8 @@
         "CFBundleName": "Open Bisbis",
         "CFBundleDisplayName": "Open Bisbis",
         "CFBundleIdentifier": "com.openbisbis.app",
-        "CFBundleIconFile": "icon.icns"
+        "CFBundleIconFile": "icon.icns",
+        "NSHumanReadableCopyright": ""
       },
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.inherit.plist",

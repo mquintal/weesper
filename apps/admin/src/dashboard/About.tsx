@@ -1,10 +1,19 @@
 import { useAppInfo, useCheckForUpdate } from '@open-bisbis/hooks'
-import { GitHubLogoIcon, ReloadIcon } from '@radix-ui/react-icons'
-import { Page } from '@/components'
+import { GitHubLogoIcon, ReloadIcon, RocketIcon } from '@radix-ui/react-icons'
+import { Page, useToast } from '@/components'
 
 export const About = () => {
   const { data: info } = useAppInfo()
-  const { mutate: checkForUpdate, isPending: isChecking } = useCheckForUpdate()
+  const { isUpdateAvailable, isChecking } = useCheckForUpdate()
+  const { toast } = useToast()
+
+  const handleCheckForUpdate = () => {
+    isUpdateAvailable().then((isUpdateAvailable) => {
+      if (!isUpdateAvailable) {
+        toast('You are using the latest version!', 'success')
+      }
+    })
+  }
 
   return (
     <Page title="About" description="Information about Open Bisbis">
@@ -22,10 +31,11 @@ export const About = () => {
           <button
             type="button"
             className="btn btn-xs btn-outline opacity-50 ml-2"
-            onClick={() => checkForUpdate()}
+            onClick={() => handleCheckForUpdate()}
             disabled={isChecking}
           >
-            {isChecking ? <ReloadIcon className="w-3 h-3 animate-spin" /> : 'Check for Updates'}
+            {isChecking ? <ReloadIcon className="w-3 h-3 animate-spin" /> : <RocketIcon className="w-3 h-3" />}
+            Check for Updates
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useAppInfo } from '@open-bisbis/hooks'
+import { useAppInfo, useInstallUpdate, useUpdateProgress, useUpdateStatus } from '@open-bisbis/hooks'
 import { GearIcon, HeartIcon, LayersIcon, MagicWandIcon, PlayIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { NavLink, Outlet } from 'react-router'
@@ -36,7 +36,7 @@ export const Layout = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-56 border-r border-base-content/10 flex flex-col p-6 bg-base-100">
+      <aside className="w-56 border-r border-base-content/10 flex flex-col p-3 bg-base-100">
         <div className="flex items-center gap-3 mb-12 px-2">
           <img
             src={logo}
@@ -45,8 +45,6 @@ export const Layout = () => {
           />
           <span className="font-black tracking-tighter text-md">Open Bisbis</span>
         </div>
-
-        <UpdateBanner />
 
         <nav className="flex-1">
           <ul className="menu w-full menu-md p-0 gap-2">
@@ -67,6 +65,7 @@ export const Layout = () => {
             </SidebarLink>
           </ul>
         </nav>
+        <UpdateApp />
         <div className="divider my-2" />
         <div className="flex justify-between items-center gap-1">
           <Feedback />
@@ -81,4 +80,34 @@ export const Layout = () => {
       </main>
     </div>
   )
+}
+
+const UpdateApp = () => {
+  const status = useUpdateStatus()
+  const progress = useUpdateProgress()
+  const { mutate: installUpdate, isPending: isInstalling } = useInstallUpdate()
+
+  if (isInstalling) {
+    return <span className="text-primary text-sm">Installing...</span>
+  }
+
+  switch (status.state) {
+    case 'downloading':
+      return (
+        <UpdateBanner
+          state="downloading"
+          progress={{
+            percent: progress?.percent ?? 0,
+            transferred: progress?.transferred ?? 0,
+            total: progress?.total ?? 0,
+          }}
+        />
+      )
+    case 'downloaded':
+      return <UpdateBanner state="downloaded" version={status.version} onInstall={installUpdate} />
+    case 'error':
+      return <UpdateBanner state="error" error={status.error ?? ''} />
+    default:
+      return null
+  }
 }

@@ -145,6 +145,13 @@ export const processAudio = () => {
         exitCode: ffmpegExitCode,
       })
 
+      if (totalBytesWritten === 0) {
+        logger.info('getAudioBuffer exiting gracefully with empty buffer (no chunks written)')
+        ffmpegProcess = null
+        ffmpegOutput = []
+        return Buffer.alloc(0)
+      }
+
       if (wavBuffer.length === 0) {
         const errMsg = ffmpegError || ffmpegStderr || 'Unknown error'
         const exitCode = ffmpegExitCode

@@ -9,4 +9,6 @@ export {
   registerCheckForUpdate,
   registerDownloadUpdate,
   registerInstallUpdate,
+  sendDownloadProgress,
+  sendStatus,
 } from './updater'
