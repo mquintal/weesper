@@ -1,8 +1,6 @@
-# OpenBisbis Non-Commercial License
+# License
 
 Version 1.0
-
-This software and associated documentation files (the "Software") are made available under this Non-Commercial License. 
 
 By using, modifying, or copying the Software, you agree to the terms and conditions outlined below.
 
