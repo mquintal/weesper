@@ -1,4 +1,4 @@
-import { InfoCircledIcon, KeyboardIcon } from '@radix-ui/react-icons'
+import { InfoCircledIcon, MagicWandIcon } from '@radix-ui/react-icons'
 import type { CreateShortcut, Shortcut } from '@weesper/ipc'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
@@ -66,7 +66,7 @@ export const ModalAiEnhancement = ({ isOpen, initial, items, onSave, onClose }: 
       title={
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <KeyboardIcon className="w-5 h-5" />
+            <MagicWandIcon className="w-5 h-5" />
           </div>
           <h3 className="font-bold text-lg">{initial ? 'Edit' : 'Add'} AI Enhancement</h3>
         </div>
