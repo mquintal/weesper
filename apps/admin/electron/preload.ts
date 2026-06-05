@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import '@sentry/electron/preload'
-import type { LogContext } from '@open-bisbis/logger'
+import type { LogContext } from '@weesper/logger'
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

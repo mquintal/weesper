@@ -1,5 +1,5 @@
-import { getMicInUse, setMicInUse } from '@open-bisbis/ipc'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { getMicInUse, setMicInUse } from '@weesper/ipc'
 
 export const useMicSettings = () => {
   const client = useQueryClient()

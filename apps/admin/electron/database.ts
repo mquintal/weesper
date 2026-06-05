@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { initDatabase } from '@open-bisbis/database'
+import { initDatabase } from '@weesper/database'
 import Database from 'better-sqlite3'
 import { getResourcePath } from './config'
 

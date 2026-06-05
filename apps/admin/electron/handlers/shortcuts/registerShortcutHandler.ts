@@ -1,4 +1,4 @@
-import { sendToggleRecording } from '@open-bisbis/ipc'
+import { sendToggleRecording } from '@weesper/ipc'
 import { type BrowserWindow, globalShortcut } from 'electron'
 
 const registeredShortcuts = new Map<string, string>()

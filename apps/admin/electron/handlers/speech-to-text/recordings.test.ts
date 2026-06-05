@@ -18,7 +18,7 @@ vi.mock('node:crypto', () => ({
 }))
 
 import fs from 'node:fs/promises'
-import type { Model } from '@open-bisbis/ipc'
+import type { Model } from '@weesper/ipc'
 import { createRecording } from './recordings'
 
 describe('STT recordings helper', () => {

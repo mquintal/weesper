@@ -1,4 +1,4 @@
-import { logger } from '@open-bisbis/logger'
+import { logger } from '@weesper/logger'
 import { ServerProcess } from './server-process'
 
 interface ServiceModelConfig {

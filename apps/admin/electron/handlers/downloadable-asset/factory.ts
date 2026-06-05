@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { updateDownloadProgress } from '@open-bisbis/ipc'
+import { updateDownloadProgress } from '@weesper/ipc'
 import type { IpcMainInvokeEvent } from 'electron'
 import { DownloadState, download } from '../../utils/download'
 import { calculateFileHash } from '../../utils/hash'

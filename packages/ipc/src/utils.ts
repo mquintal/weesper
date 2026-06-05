@@ -1,4 +1,4 @@
-import { logger } from '@open-bisbis/logger'
+import { logger } from '@weesper/logger'
 import type { IpcMain, IpcRenderer } from 'electron'
 import * as v from 'valibot'
 import type { IpcResult } from './types'

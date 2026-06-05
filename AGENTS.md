@@ -1,10 +1,10 @@
 # AGENTS.md
 
-This file provides guidance to AI coding assistants working on the OpenBisbis codebase.
+This file provides guidance to AI coding assistants working on the Weesper codebase.
 
 ## Project Overview
 
-OpenBisbis is a **desktop speech-to-text application** built with Electron.
+Weesper is a **desktop speech-to-text application** built with Electron.
 It records audio via the system microphone, transcribes it locally using a
 whisper.cpp server, and optionally enhances the transcript with a local
 llama.cpp LLM server — then pastes the result into the active application.
@@ -15,7 +15,7 @@ Everything runs 100 % offline on the user's machine.
 This is a **Yarn 4 workspaces** monorepo. Never use `npm`.
 
 ```
-open-bisbis/
+weesper/
 ├── apps/
 │   └── main-app/          # Electron application (main + renderer)
 │       ├── electron/       # Main-process code (Node.js / Electron APIs)
@@ -35,8 +35,8 @@ open-bisbis/
 │           ├── dashboard/        # Main UI (models, settings, shortcuts)
 │           └── components/       # Shared UI components (Card, etc.)
 ├── packages/
-│   ├── ipc/               # @open-bisbis/ipc — Type-safe IPC contract layer
-│   └── hooks/             # @open-bisbis/hooks — React Query hooks for the UI
+│   ├── ipc/               # @weesper/ipc — Type-safe IPC contract layer
+│   └── hooks/             # @weesper/hooks — React Query hooks for the UI
 ├── scripts/               # Native dependency build scripts (ffmpeg, whisper, llama)
 ├── biome.json             # Linter + formatter config (replaces ESLint/Prettier)
 └── package.json           # Root workspace config
@@ -45,11 +45,11 @@ open-bisbis/
 ### Package Dependency Graph
 
 ```
-@open-bisbis/hooks  →  @open-bisbis/ipc
-main-app             →  @open-bisbis/hooks, @open-bisbis/ipc
+@weesper/hooks  →  @weesper/ipc
+main-app             →  @weesper/hooks, @weesper/ipc
 ```
 
-`@open-bisbis/ipc` is consumed by **both** the main process (handler registration)
+`@weesper/ipc` is consumed by **both** the main process (handler registration)
 and the renderer process (via hooks). It must never import Electron main-process APIs
 directly — it uses `import type` for `IpcMain` and `IpcRenderer`.
 
@@ -71,7 +71,7 @@ UI Component → Hook (packages/hooks) → IPC call (packages/ipc) → Handler (
    `useMutation` hook that calls the IPC client function via `window.ipcRenderer`.
 4. **`packages/hooks/src/index.ts`** — Re-export the new hook.
 5. **`apps/main-app/electron/handlers/<domain>/`** — Implement the handler,
-   call `register*()` from `@open-bisbis/ipc`, wire to services/storage.
+   call `register*()` from `@weesper/ipc`, wire to services/storage.
 6. **`apps/main-app/electron/handlers/index.ts`** — Re-export the handler.
 7. **`apps/main-app/electron/main.ts`** — Call the handler at startup.
 
@@ -132,7 +132,7 @@ UI Component → Hook (packages/hooks) → IPC call (packages/ipc) → Handler (
 
 ### React Patterns
 
-- Hooks live in `@open-bisbis/hooks`, not in the app's `src/` directory.
+- Hooks live in `@weesper/hooks`, not in the app's `src/` directory.
 - Data fetching uses `useQuery`; mutations use `useMutation` with `queryClient.invalidateQueries`.
 - IPC is accessed via `window.ipcRenderer` (exposed by preload script).
 - Use `classnames` package to create conditional styles based on variables.

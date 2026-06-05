@@ -1,11 +1,11 @@
-import * as ipc from '@open-bisbis/ipc'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
+import * as ipc from '@weesper/ipc'
 import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useOnboarding } from './onboarding'
 
-vi.mock('@open-bisbis/ipc', () => ({
+vi.mock('@weesper/ipc', () => ({
   getAccessibilityGrant: vi.fn(),
   getMicGrant: vi.fn(),
   getOnboarded: vi.fn(),

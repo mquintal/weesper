@@ -1,4 +1,4 @@
-import { useMicSettings } from '@open-bisbis/hooks'
+import { useMicSettings } from '@weesper/hooks'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components'

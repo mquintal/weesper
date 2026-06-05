@@ -1,6 +1,6 @@
-import { useCreateShortcut, useDeleteShortcut, useShortcuts, useUpdateShortcut } from '@open-bisbis/hooks'
-import type { CreateShortcut, Shortcut } from '@open-bisbis/ipc'
 import { PlusIcon } from '@radix-ui/react-icons'
+import { useCreateShortcut, useDeleteShortcut, useShortcuts, useUpdateShortcut } from '@weesper/hooks'
+import type { CreateShortcut, Shortcut } from '@weesper/ipc'
 import { useState } from 'react'
 import { DeleteConfirmation, Header, QueryError, useToast } from '@/components'
 import { ListAiEnhancements } from './ListAiEnhancements'

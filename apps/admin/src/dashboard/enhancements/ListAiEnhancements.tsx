@@ -1,5 +1,5 @@
-import type { Shortcut } from '@open-bisbis/ipc'
 import { MagicWandIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import type { Shortcut } from '@weesper/ipc'
 
 type ListAiEnhancementsProps = {
   items: Shortcut[]

@@ -1,7 +1,7 @@
-import { logger, setLogger } from '@open-bisbis/logger'
 import { init } from '@sentry/electron/renderer'
 import * as SentryReact from '@sentry/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { logger, setLogger } from '@weesper/logger'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { ErrorFallback, ToastProvider } from '@/components'

@@ -1,4 +1,4 @@
-import { registerListLanguages } from '@open-bisbis/ipc'
+import { registerListLanguages } from '@weesper/ipc'
 import type { IpcMain } from 'electron'
 import { languages } from './config'
 

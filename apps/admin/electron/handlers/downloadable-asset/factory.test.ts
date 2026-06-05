@@ -12,7 +12,7 @@ vi.mock('node:fs', () => ({
   },
 }))
 
-vi.mock('@open-bisbis/ipc', () => ({
+vi.mock('@weesper/ipc', () => ({
   updateDownloadProgress: vi.fn(),
 }))
 

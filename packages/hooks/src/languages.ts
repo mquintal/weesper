@@ -1,5 +1,5 @@
-import { getListLanguages } from '@open-bisbis/ipc'
 import { useQuery } from '@tanstack/react-query'
+import { getListLanguages } from '@weesper/ipc'
 
 export const useLanguages = () => {
   return useQuery({

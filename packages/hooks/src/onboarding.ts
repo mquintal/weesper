@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getAccessibilityGrant,
   getMicGrant,
@@ -5,9 +6,8 @@ import {
   postAccessibilityGrant,
   postMicGrant,
   postOnboarded,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useMicGrant = () => {
   const client = useQueryClient()

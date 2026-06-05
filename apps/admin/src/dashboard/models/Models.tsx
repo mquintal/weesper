@@ -1,4 +1,4 @@
-import { useDeleteModel, useModels, useSelectModel } from '@open-bisbis/hooks'
+import { useDeleteModel, useModels, useSelectModel } from '@weesper/hooks'
 import { useEffect, useMemo, useState } from 'react'
 import { DeleteConfirmation, Page, QueryError, useToast } from '@/components'
 import { Model } from './Model'

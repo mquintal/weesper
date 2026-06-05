@@ -6,7 +6,7 @@
   "author": "Miguel Quintal",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mquintal/open-bisbis.git"
+    "url": "git+https://github.com/mquintal/weesper.git"
   },
   "main": "dist-electron/main.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "lint": "biome check src electron",
     "reset:permissions": "tccutil reset Microphone com.apple.Terminal && tccutil reset Accessibility com.apple.Terminal",
     "clean": "rm -rf dist && rm -rf dist-electron",
-    "clean:data": "rm -rf ~/Library/Application\\ Support/Open\\ Bisbis",
+    "clean:data": "rm -rf ~/Library/Application\\ Support/Weesper",
     "postinstall": "electron-builder install-app-deps && electron-rebuild -f -v 41.5.0 -w better-sqlite3",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -28,12 +28,12 @@
     "test:watch": "vitest --config vitest.config.node.ts"
   },
   "dependencies": {
-    "@open-bisbis/config": "workspace:*",
-    "@open-bisbis/database": "workspace:*",
-    "@open-bisbis/hooks": "workspace:*",
-    "@open-bisbis/ipc": "workspace:*",
-    "@open-bisbis/logger": "workspace:*",
     "@sentry/electron": "^7.13.0",
+    "@weesper/config": "workspace:*",
+    "@weesper/database": "workspace:*",
+    "@weesper/hooks": "workspace:*",
+    "@weesper/ipc": "workspace:*",
+    "@weesper/logger": "workspace:*",
     "better-sqlite3": "^12.9.0",
     "electron-log": "^5.4.3",
     "electron-updater": "6.8.3",
@@ -79,8 +79,8 @@
     "vitest": "^3.1.2"
   },
   "build": {
-    "appId": "com.openbisbis.app",
-    "productName": "Open Bisbis",
+    "appId": "com.weesper.app",
+    "productName": "Weesper",
     "electronVersion": "41.5.0",
     "copyright": "",
     "directories": {
@@ -89,7 +89,7 @@
     "publish": {
       "provider": "github",
       "owner": "mquintal",
-      "repo": "open-bisbis"
+      "repo": "weesper"
     },
     "files": [
       "dist",
@@ -114,7 +114,7 @@
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.utilities",
-      "artifactName": "open-bisbis_v${version}.${ext}",
+      "artifactName": "weesper_v${version}.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -130,11 +130,11 @@
         }
       ],
       "extendInfo": {
-        "NSMicrophoneUsageDescription": "Open Bisbis needs access to your microphone to transcribe your speech into text.",
-        "NSAccessibilityUsageDescription": "Open Bisbis needs accessibility access to provide global shortcuts and interact with other applications for transcription.",
-        "CFBundleName": "Open Bisbis",
-        "CFBundleDisplayName": "Open Bisbis",
-        "CFBundleIdentifier": "com.openbisbis.app",
+        "NSMicrophoneUsageDescription": "Weesper needs access to your microphone to transcribe your speech into text.",
+        "NSAccessibilityUsageDescription": "Weesper needs accessibility access to provide global shortcuts and interact with other applications for transcription.",
+        "CFBundleName": "Weesper",
+        "CFBundleDisplayName": "Weesper",
+        "CFBundleIdentifier": "com.weesper.app",
         "CFBundleIconFile": "icon.icns",
         "NSHumanReadableCopyright": ""
       },

@@ -1,11 +1,11 @@
-import * as storage from '@open-bisbis/config'
+import * as storage from '@weesper/config'
 import {
   registerCancelDownloadLlm,
   registerDeleteLlm,
   registerDownloadLlm,
   registerListLlms,
   registerSelectLlm,
-} from '@open-bisbis/ipc'
+} from '@weesper/ipc'
 import type { IpcMain } from 'electron'
 import { llms } from '../../config'
 import { createHandlers, type StorageAdapter } from '../downloadable-asset'

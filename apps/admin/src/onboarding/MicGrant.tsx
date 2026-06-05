@@ -1,4 +1,4 @@
-import { useMicGrant } from '@open-bisbis/hooks'
+import { useMicGrant } from '@weesper/hooks'
 import { PermissionGrantCard } from './PermissionGrantCard'
 
 export const MicGrant = () => {
@@ -32,7 +32,7 @@ export const MicGrant = () => {
           <>
             Please open{' '}
             <span className="font-semibold">System Settings &gt; Privacy &amp; Security &gt; Microphone</span> and
-            enable access for Open Bisbis.
+            enable access for Weesper.
           </>
         ) : undefined
       }

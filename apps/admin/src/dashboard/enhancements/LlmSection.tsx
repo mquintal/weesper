@@ -1,4 +1,4 @@
-import { useDeleteLlm, useLlms } from '@open-bisbis/hooks'
+import { useDeleteLlm, useLlms } from '@weesper/hooks'
 import { useCallback, useState } from 'react'
 import { DeleteConfirmation, Header, QueryError, useToast } from '@/components'
 import { Llm } from './Llm'

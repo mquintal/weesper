@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { recordingsRepo } from '@electron/database'
-import type { Model } from '@open-bisbis/ipc'
+import type { Model } from '@weesper/ipc'
 import { app } from 'electron'
 
 type CreateDeps = {

@@ -1,6 +1,6 @@
-import { listenToWidgetStatus, listenToWidgetWillHide, type WidgetStatus } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { listenToWidgetStatus, listenToWidgetWillHide, type WidgetStatus } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import classNames from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
 import hark from 'hark'

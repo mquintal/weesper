@@ -1,5 +1,5 @@
-import { useAppInfo, useCheckForUpdate } from '@open-bisbis/hooks'
 import { GitHubLogoIcon, ReloadIcon, RocketIcon } from '@radix-ui/react-icons'
+import { useAppInfo, useCheckForUpdate } from '@weesper/hooks'
 import { Page, useToast } from '@/components'
 
 export const About = () => {
@@ -16,11 +16,11 @@ export const About = () => {
   }
 
   return (
-    <Page title="About" description="Information about Open Bisbis">
+    <Page title="About" description="Information about Weesper">
       <div className="">
         <p className="opacity-70 leading-relaxed text-lg">
-          Open Bisbis is a local-first voice transcription tool powered by OpenAI's Whisper models. Everything runs on
-          your machine, ensuring maximum privacy and speed.
+          Weesper is a local-first voice transcription tool powered by OpenAI's Whisper models. Everything runs on your
+          machine, ensuring maximum privacy and speed.
         </p>
         <div className="card-actions justify-start mt-4 items-center">
           <span className="badge badge-outline badge-md py-2 opacity-50">v{info?.version ?? '...'}</span>

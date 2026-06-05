@@ -1,14 +1,14 @@
-import { registerLoggerHandler } from '@open-bisbis/ipc'
-import type { LogContext } from '@open-bisbis/logger'
-import { setLogger } from '@open-bisbis/logger'
 import * as Sentry from '@sentry/electron/main'
+import { registerLoggerHandler } from '@weesper/ipc'
+import type { LogContext } from '@weesper/logger'
+import { setLogger } from '@weesper/logger'
 import { ipcMain } from 'electron'
 import type { LogMessage } from 'electron-log'
 import log from 'electron-log/main'
 
 // Configure electron-log
 // It automatically saves logs to the user data directory:
-// macOS: ~/Library/Logs/Open Bisbis/main.log
+// macOS: ~/Library/Logs/Weesper/main.log
 log.transports.file.level = 'info'
 log.transports.file.maxSize = 5 * 1024 * 1024 // 5MB
 

@@ -1,4 +1,4 @@
-import { useCancelDownloadModel, useDownloadModel, useLanguages } from '@open-bisbis/hooks'
+import { useCancelDownloadModel, useDownloadModel, useLanguages } from '@weesper/hooks'
 import { useMemo } from 'react'
 import { Card, useToast } from '../../components'
 import { CardFooter } from './CardFooter'

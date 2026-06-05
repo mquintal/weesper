@@ -1,5 +1,5 @@
-import { getMicGrant, getMicInUse, setMicGrant, setMicInUse } from '@open-bisbis/config'
-import { registerGetMicGrant, registerGetMicInUse, registerPostMicGrant, registerSetMicInUse } from '@open-bisbis/ipc'
+import { getMicGrant, getMicInUse, setMicGrant, setMicInUse } from '@weesper/config'
+import { registerGetMicGrant, registerGetMicInUse, registerPostMicGrant, registerSetMicInUse } from '@weesper/ipc'
 import { type IpcMain, systemPreferences } from 'electron'
 import { resolvePermission } from './resolve-permission'
 

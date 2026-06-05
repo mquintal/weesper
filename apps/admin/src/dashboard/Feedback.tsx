@@ -1,6 +1,6 @@
-import { logger } from '@open-bisbis/logger'
 import { ChatBubbleIcon, CheckCircledIcon } from '@radix-ui/react-icons'
 import * as Sentry from '@sentry/react'
+import { logger } from '@weesper/logger'
 import { useState } from 'react'
 import { Modal } from '@/components'
 

@@ -1,4 +1,4 @@
-import { useOnboarding } from '@open-bisbis/hooks'
+import { useOnboarding } from '@weesper/hooks'
 import { Navigate, Route, Routes } from 'react-router'
 import './index.css'
 import { About, Enhancements, General, Layout, Models, Recordings } from './dashboard'

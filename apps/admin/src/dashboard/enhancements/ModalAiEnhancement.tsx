@@ -1,5 +1,5 @@
-import type { CreateShortcut, Shortcut } from '@open-bisbis/ipc'
 import { InfoCircledIcon, KeyboardIcon } from '@radix-ui/react-icons'
+import type { CreateShortcut, Shortcut } from '@weesper/ipc'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { InputShortcut, Modal } from '@/components'

@@ -1,6 +1,6 @@
-import { useCancelDownloadModel, useDownloadModel, useModels } from '@open-bisbis/hooks'
-import { listenForDownloadProgress } from '@open-bisbis/ipc'
 import { Cross1Icon, CubeIcon } from '@radix-ui/react-icons'
+import { useCancelDownloadModel, useDownloadModel, useModels } from '@weesper/hooks'
+import { listenForDownloadProgress } from '@weesper/ipc'
 import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { QueryError, useToast } from '@/components'

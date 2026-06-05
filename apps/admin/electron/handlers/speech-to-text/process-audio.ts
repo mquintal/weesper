@@ -1,6 +1,6 @@
 import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process'
 import path from 'node:path'
-import { logger } from '@open-bisbis/logger'
+import { logger } from '@weesper/logger'
 import { RESOURCES_PATH } from '../../config'
 
 export const processAudio = () => {

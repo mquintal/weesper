@@ -1,11 +1,11 @@
-import { isOnboarded, setIsOnboarded } from '@open-bisbis/config'
+import { isOnboarded, setIsOnboarded } from '@weesper/config'
 import {
   registerGetAccessibilityGrant,
   registerGetOnboarded,
   registerPostAccessibilityGrant,
   registerPostOnboarded,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import { type IpcMain, systemPreferences } from 'electron'
 
 export const handler = (ipcMain: IpcMain) => {

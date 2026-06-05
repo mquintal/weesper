@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { vi } from 'vitest'
 
-const tmpDir = path.join(os.tmpdir(), `open-bisbis-tests-${Math.random().toString(36).slice(2)}`)
+const tmpDir = path.join(os.tmpdir(), `weesper-tests-${Math.random().toString(36).slice(2)}`)
 if (!fs.existsSync(tmpDir)) {
   fs.mkdirSync(tmpDir, { recursive: true })
 }

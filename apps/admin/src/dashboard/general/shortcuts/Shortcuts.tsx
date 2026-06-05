@@ -1,5 +1,5 @@
-import { useDefaultShortcut, useSetDefaultShortcut } from '@open-bisbis/hooks'
 import { KeyboardIcon } from '@radix-ui/react-icons'
+import { useDefaultShortcut, useSetDefaultShortcut } from '@weesper/hooks'
 import { Card, InputShortcut, QueryError, useToast } from '@/components'
 
 export const Shortcuts = () => {

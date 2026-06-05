@@ -1,5 +1,5 @@
 {
-  "name": "@open-bisbis/config",
+  "name": "@weesper/config",
   "version": "0.0.1",
   "private": true,
   "main": "./src/index.ts",

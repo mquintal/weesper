@@ -6,7 +6,7 @@ import {
   registerGetRecording,
   registerGetRecordingAudio,
   registerListRecordings,
-} from '@open-bisbis/ipc'
+} from '@weesper/ipc'
 import type { IpcMain } from 'electron'
 
 type Deps = {

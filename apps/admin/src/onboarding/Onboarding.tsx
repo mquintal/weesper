@@ -1,6 +1,6 @@
-import { useLanguages, useOnboarding, useSelectModel } from '@open-bisbis/hooks'
-import { logger } from '@open-bisbis/logger'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
+import { useLanguages, useOnboarding, useSelectModel } from '@weesper/hooks'
+import { logger } from '@weesper/logger'
 import classNames from 'classnames'
 import { useState } from 'react'
 import { useToast } from '@/components'
@@ -39,10 +39,10 @@ export const Onboarding = () => {
           <div className="mb-8">
             <div className="flex justify-center mb-6">
               <div className="w-14 h-14 rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center transform hover:rotate-6 transition-transform duration-300 overflow-hidden">
-                <img src={logo} className="w-full h-full object-cover" alt="Open Bisbis Logo" />
+                <img src={logo} className="w-full h-full object-cover" alt="Weesper Logo" />
               </div>
             </div>
-            <h1 className="text-2xl font-extrabold mb-3 text-base-content tracking-tight">Open Bisbis</h1>
+            <h1 className="text-2xl font-extrabold mb-3 text-base-content tracking-tight">Weesper</h1>
             <p className="text-md text-base-content/70">
               Your local, privacy-first AI voice assistant. Let's get you set up.
             </p>

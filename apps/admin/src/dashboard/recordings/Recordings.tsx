@@ -1,5 +1,5 @@
-import { useDeleteRecording, useRecordings } from '@open-bisbis/hooks'
 import { CookieIcon, EyeOpenIcon, TrashIcon } from '@radix-ui/react-icons'
+import { useDeleteRecording, useRecordings } from '@weesper/hooks'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { DeleteConfirmation, Page, QueryError } from '@/components'

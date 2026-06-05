@@ -1,4 +1,4 @@
-import { type DownloadState, listenForDownloadProgress } from '@open-bisbis/ipc'
+import { type DownloadState, listenForDownloadProgress } from '@weesper/ipc'
 import { useEffect, useRef, useState } from 'react'
 
 export const useDownload = (id: string, onFinish: () => void) => {

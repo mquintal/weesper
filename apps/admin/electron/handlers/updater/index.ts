@@ -1,4 +1,4 @@
-import { registerCheckForUpdate, registerDownloadUpdate, registerInstallUpdate } from '@open-bisbis/ipc'
+import { registerCheckForUpdate, registerDownloadUpdate, registerInstallUpdate } from '@weesper/ipc'
 import type { IpcMain } from 'electron'
 import { checkForUpdates, downloadUpdate, installUpdate } from '../../services/auto-updater'
 

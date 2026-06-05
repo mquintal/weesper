@@ -1,4 +1,4 @@
-import { useAccessibilityGrant } from '@open-bisbis/hooks'
+import { useAccessibilityGrant } from '@weesper/hooks'
 import { PermissionGrantCard } from './PermissionGrantCard'
 
 export const AccessibilityGrant = () => {
@@ -22,7 +22,7 @@ export const AccessibilityGrant = () => {
       onAction={onRequestPermission}
       infoMessage={
         !grant
-          ? 'Open Bisbis needs this permission to simulate keystrokes and insert transcriptions directly into your active window.'
+          ? 'Weesper needs this permission to simulate keystrokes and insert transcriptions directly into your active window.'
           : undefined
       }
     />

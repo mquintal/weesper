@@ -1,5 +1,5 @@
-import { copyText } from '@open-bisbis/ipc'
 import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
+import { copyText } from '@weesper/ipc'
 import classNames from 'classnames'
 import { useState } from 'react'
 

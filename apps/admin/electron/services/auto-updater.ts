@@ -1,5 +1,5 @@
-import { sendDownloadProgress, sendStatus as sendUpdateStatus } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
+import { sendDownloadProgress, sendStatus as sendUpdateStatus } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import { app, type BrowserWindow, Menu, MenuItem } from 'electron'
 import { autoUpdater, type ProgressInfo, type UpdateInfo } from 'electron-updater'
 

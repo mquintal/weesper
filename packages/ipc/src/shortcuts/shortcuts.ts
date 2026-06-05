@@ -1,5 +1,5 @@
-import type { Shortcut as DbShortcut } from '@open-bisbis/database'
-import { logger } from '@open-bisbis/logger'
+import type { Shortcut as DbShortcut } from '@weesper/database'
+import { logger } from '@weesper/logger'
 import type { BrowserWindow, IpcMain, IpcRenderer, IpcRendererEvent } from 'electron'
 import * as v from 'valibot'
 import { createMainHandler, createRendererInvoker } from '../utils'

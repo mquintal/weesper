@@ -1,11 +1,11 @@
-import * as storage from '@open-bisbis/config'
+import * as storage from '@weesper/config'
 import {
   registerCancelDownloadModel,
   registerDeleteModel,
   registerDownloadModel,
   registerListModels,
   registerSelectModel,
-} from '@open-bisbis/ipc'
+} from '@weesper/ipc'
 import type { IpcMain } from 'electron'
 import { models } from '../../config'
 import { createHandlers, type StorageAdapter } from '../downloadable-asset'

@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query'
 import {
   checkForUpdate,
   downloadUpdate,
@@ -6,9 +7,8 @@ import {
   listenForUpdateStatus,
   type UpdateProgress,
   type UpdateStatus,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
-import { useMutation } from '@tanstack/react-query'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import { useEffect, useState } from 'react'
 
 export const useUpdateStatus = () => {

@@ -1,11 +1,11 @@
-import { useMicSettings, useTranscribe } from '@open-bisbis/hooks'
+import { useMicSettings, useTranscribe } from '@weesper/hooks'
 import {
   listenForToggleRecording,
   pasteText,
   sendRecordingChunk,
   startRecording as startRecordingIpc,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import { useEffect, useRef, useState } from 'react'
 
 export const useRecordingManager = () => {

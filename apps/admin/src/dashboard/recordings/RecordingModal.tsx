@@ -1,6 +1,6 @@
-import { useRecording } from '@open-bisbis/hooks'
-import { getRecordingAudio } from '@open-bisbis/ipc'
 import { CalendarIcon, TimerIcon } from '@radix-ui/react-icons'
+import { useRecording } from '@weesper/hooks'
+import { getRecordingAudio } from '@weesper/ipc'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'

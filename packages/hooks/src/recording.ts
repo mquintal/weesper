@@ -1,6 +1,6 @@
-import { stopRecording } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
 import { useMutation } from '@tanstack/react-query'
+import { stopRecording } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useTranscribe = () => {
   const { mutateAsync: transcribe, isPending: transcribing } = useMutation({

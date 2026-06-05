@@ -1,4 +1,4 @@
-import { registerGetAppInfo } from '@open-bisbis/ipc'
+import { registerGetAppInfo } from '@weesper/ipc'
 import { app, type IpcMain } from 'electron'
 
 export const handler = (ipcMain: IpcMain) => {

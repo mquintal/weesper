@@ -12,7 +12,7 @@ const store = new Store<{
   downloadedModels: Record<string, string>
   downloadedLlms: Record<string, string>
 }>({
-  name: 'open-bisbis',
+  name: 'weesper',
   defaults: {
     micGrant: 'idle',
     micInUse: '',

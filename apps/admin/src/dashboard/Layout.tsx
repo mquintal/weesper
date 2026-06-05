@@ -1,5 +1,5 @@
-import { useAppInfo, useInstallUpdate, useUpdateProgress, useUpdateStatus } from '@open-bisbis/hooks'
 import { GearIcon, HeartIcon, LayersIcon, MagicWandIcon, PlayIcon } from '@radix-ui/react-icons'
+import { useAppInfo, useInstallUpdate, useUpdateProgress, useUpdateStatus } from '@weesper/hooks'
 import classNames from 'classnames'
 import { NavLink, Outlet } from 'react-router'
 import logo from '../assets/logo.svg'
@@ -40,10 +40,10 @@ export const Layout = () => {
         <div className="flex items-center gap-3 mb-12 px-2">
           <img
             src={logo}
-            alt="Open Bisbis"
+            alt="Weesper"
             className="w-10 h-10 rounded-xl shadow-xl shadow-primary/30 transform hover:rotate-6 transition-transform duration-300"
           />
-          <span className="font-black tracking-tighter text-md">Open Bisbis</span>
+          <span className="font-black tracking-tighter text-md">Weesper</span>
         </div>
 
         <nav className="flex-1">

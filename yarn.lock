@@ -1380,65 +1380,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@open-bisbis/config@workspace:*, @open-bisbis/config@workspace:packages/config":
-  version: 0.0.0-use.local
-  resolution: "@open-bisbis/config@workspace:packages/config"
-  dependencies:
-    electron-store: "npm:^10.0.1"
-    typescript: "npm:^6.0.3"
-  languageName: unknown
-  linkType: soft
-
-"@open-bisbis/database@workspace:*, @open-bisbis/database@workspace:packages/database":
-  version: 0.0.0-use.local
-  resolution: "@open-bisbis/database@workspace:packages/database"
-  dependencies:
-    better-sqlite3: "npm:^12.9.0"
-    kysely: "npm:^0.27.3"
-    kysely-codegen: "npm:^0.20.0"
-    tsx: "npm:^4.21.0"
-    typescript: "npm:^6.0.3"
-    vitest: "npm:^1.6.0"
-  languageName: unknown
-  linkType: soft
-
-"@open-bisbis/hooks@workspace:*, @open-bisbis/hooks@workspace:packages/hooks":
-  version: 0.0.0-use.local
-  resolution: "@open-bisbis/hooks@workspace:packages/hooks"
-  dependencies:
-    "@open-bisbis/ipc": "workspace:*"
-    "@open-bisbis/logger": "workspace:*"
-    "@tanstack/react-query": "npm:^5.100.9"
-    "@testing-library/dom": "npm:^10.4.1"
-    "@testing-library/react": "npm:^16.2.0"
-    electron: "npm:41.5.0"
-    jsdom: "npm:^26.0.0"
-    react: "npm:^19.2.5"
-    typescript: "npm:^6.0.3"
-    vitest: "npm:^1.6.0"
-  languageName: unknown
-  linkType: soft
-
-"@open-bisbis/ipc@workspace:*, @open-bisbis/ipc@workspace:packages/ipc":
-  version: 0.0.0-use.local
-  resolution: "@open-bisbis/ipc@workspace:packages/ipc"
-  dependencies:
-    "@open-bisbis/database": "workspace:*"
-    "@open-bisbis/logger": "workspace:*"
-    electron: "npm:41.5.0"
-    valibot: "npm:^1.3.1"
-    vitest: "npm:^1.6.0"
-  languageName: unknown
-  linkType: soft
-
-"@open-bisbis/logger@workspace:*, @open-bisbis/logger@workspace:packages/logger":
-  version: 0.0.0-use.local
-  resolution: "@open-bisbis/logger@workspace:packages/logger"
-  dependencies:
-    typescript: "npm:^6.0.3"
-  languageName: unknown
-  linkType: soft
-
 "@opentelemetry/api-logs@npm:0.207.0":
   version: 0.207.0
   resolution: "@opentelemetry/api-logs@npm:0.207.0"
@@ -3956,6 +3897,65 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@weesper/config@workspace:*, @weesper/config@workspace:packages/config":
+  version: 0.0.0-use.local
+  resolution: "@weesper/config@workspace:packages/config"
+  dependencies:
+    electron-store: "npm:^10.0.1"
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
+
+"@weesper/database@workspace:*, @weesper/database@workspace:packages/database":
+  version: 0.0.0-use.local
+  resolution: "@weesper/database@workspace:packages/database"
+  dependencies:
+    better-sqlite3: "npm:^12.9.0"
+    kysely: "npm:^0.27.3"
+    kysely-codegen: "npm:^0.20.0"
+    tsx: "npm:^4.21.0"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^1.6.0"
+  languageName: unknown
+  linkType: soft
+
+"@weesper/hooks@workspace:*, @weesper/hooks@workspace:packages/hooks":
+  version: 0.0.0-use.local
+  resolution: "@weesper/hooks@workspace:packages/hooks"
+  dependencies:
+    "@tanstack/react-query": "npm:^5.100.9"
+    "@testing-library/dom": "npm:^10.4.1"
+    "@testing-library/react": "npm:^16.2.0"
+    "@weesper/ipc": "workspace:*"
+    "@weesper/logger": "workspace:*"
+    electron: "npm:41.5.0"
+    jsdom: "npm:^26.0.0"
+    react: "npm:^19.2.5"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^1.6.0"
+  languageName: unknown
+  linkType: soft
+
+"@weesper/ipc@workspace:*, @weesper/ipc@workspace:packages/ipc":
+  version: 0.0.0-use.local
+  resolution: "@weesper/ipc@workspace:packages/ipc"
+  dependencies:
+    "@weesper/database": "workspace:*"
+    "@weesper/logger": "workspace:*"
+    electron: "npm:41.5.0"
+    valibot: "npm:^1.3.1"
+    vitest: "npm:^1.6.0"
+  languageName: unknown
+  linkType: soft
+
+"@weesper/logger@workspace:*, @weesper/logger@workspace:packages/logger":
+  version: 0.0.0-use.local
+  resolution: "@weesper/logger@workspace:packages/logger"
+  dependencies:
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
+
 "@xmldom/xmldom@npm:^0.8.8":
   version: 0.8.13
   resolution: "@xmldom/xmldom@npm:0.8.13"
@@ -4016,11 +4016,6 @@ __metadata:
   resolution: "admin@workspace:apps/admin"
   dependencies:
     "@electron/rebuild": "npm:^4.0.4"
-    "@open-bisbis/config": "workspace:*"
-    "@open-bisbis/database": "workspace:*"
-    "@open-bisbis/hooks": "workspace:*"
-    "@open-bisbis/ipc": "workspace:*"
-    "@open-bisbis/logger": "workspace:*"
     "@radix-ui/react-icons": "npm:^1.3.2"
     "@radix-ui/react-toast": "npm:^1.2.15"
     "@sentry/electron": "npm:^7.13.0"
@@ -4036,6 +4031,11 @@ __metadata:
     "@types/react": "npm:^19.2.14"
     "@types/react-dom": "npm:^19.2.3"
     "@vitejs/plugin-react": "npm:^6.0.1"
+    "@weesper/config": "workspace:*"
+    "@weesper/database": "workspace:*"
+    "@weesper/hooks": "workspace:*"
+    "@weesper/ipc": "workspace:*"
+    "@weesper/logger": "workspace:*"
     better-sqlite3: "npm:^12.9.0"
     classnames: "npm:^2.5.1"
     daisyui: "npm:^5.5.19"
@@ -7696,18 +7696,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open-bisbis@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "open-bisbis@workspace:."
-  dependencies:
-    "@biomejs/biome": "npm:^2.4.14"
-    "@commitlint/cli": "npm:^21.0.1"
-    "@commitlint/config-conventional": "npm:^21.0.1"
-    husky: "npm:^9.1.7"
-    knip: "npm:^6.14.1"
-  languageName: unknown
-  linkType: soft
-
 "open@npm:^10.2.0":
   version: 10.2.0
   resolution: "open@npm:10.2.0"
@@ -10107,6 +10095,18 @@ __metadata:
   checksum: 10c0/5ffbddf0e84bf1562ff86cf6fcf039c74edf09d78358a6904a09bbd4484e8bb6812dc385fe14330b715031892dcd8423f7a88278b57c9f5002c84c2860179add
   languageName: node
   linkType: hard
+
+"weesper@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "weesper@workspace:."
+  dependencies:
+    "@biomejs/biome": "npm:^2.4.14"
+    "@commitlint/cli": "npm:^21.0.1"
+    "@commitlint/config-conventional": "npm:^21.0.1"
+    husky: "npm:^9.1.7"
+    knip: "npm:^6.14.1"
+  languageName: unknown
+  linkType: soft
 
 "whatwg-encoding@npm:^3.1.1":
   version: 3.1.1

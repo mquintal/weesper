@@ -1,6 +1,6 @@
-import { getAppInfo } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
 import { useQuery } from '@tanstack/react-query'
+import { getAppInfo } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useAppInfo = () => {
   return useQuery({

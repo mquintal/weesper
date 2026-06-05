@@ -57,7 +57,7 @@ jobs:
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
           files: |
-            apps/admin/release/*/open-bisbis_v*.dmg
+            apps/admin/release/*/weesper_v*.dmg
             apps/admin/release/*/*.zip
             apps/admin/release/*/latest-mac.yml
           generate_release_notes: true

@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   type CreateShortcut,
   createShortcut,
@@ -6,9 +7,8 @@ import {
   getListShortcuts,
   setDefaultShortcut,
   updateShortcut,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useDefaultShortcut = () => {
   return useQuery({

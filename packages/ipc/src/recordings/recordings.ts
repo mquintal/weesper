@@ -1,4 +1,4 @@
-import type { Recording as DbRecording } from '@open-bisbis/database'
+import type { Recording as DbRecording } from '@weesper/database'
 import type { IpcMain, IpcRenderer } from 'electron'
 import * as v from 'valibot'
 import type { IpcResult } from '../types'

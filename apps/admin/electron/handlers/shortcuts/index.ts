@@ -7,7 +7,7 @@ import {
   registerListShortcuts,
   registerSetDefaultShortcut,
   registerUpdateShortcut,
-} from '@open-bisbis/ipc'
+} from '@weesper/ipc'
 import { type BrowserWindow, globalShortcut as electronGlobalShortcut, type IpcMain } from 'electron'
 import { toElectronShortcut, toUIShortcut } from './mapping'
 import { registerShortcutHandler } from './registerShortcutHandler'

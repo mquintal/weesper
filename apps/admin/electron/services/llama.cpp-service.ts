@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { getSelectedLlm } from '@open-bisbis/config'
+import { getSelectedLlm } from '@weesper/config'
 import * as v from 'valibot'
 import { llms, RESOURCES_PATH } from '../config'
 import { getOptimalThreadCount } from './cpu'

@@ -1,6 +1,6 @@
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
-import { logger } from '@open-bisbis/logger'
+import { logger } from '@weesper/logger'
 import { clipboard, systemPreferences } from 'electron'
 
 const execAsync = promisify(exec)

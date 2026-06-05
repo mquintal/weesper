@@ -1,6 +1,6 @@
-import { deleteRecording, getListRecordings, getRecording } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { deleteRecording, getListRecordings, getRecording } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useRecordings = () => {
   return useQuery({

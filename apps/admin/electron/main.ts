@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/electron/main'
 import { app } from 'electron'
 import { getRecentLogs } from './logger-setup'
 
-app.setName('Open Bisbis')
+app.setName('Weesper')
 
 Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,

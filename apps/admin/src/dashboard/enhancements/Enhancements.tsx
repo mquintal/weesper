@@ -1,4 +1,4 @@
-import { useLlms, useShortcuts } from '@open-bisbis/hooks'
+import { useLlms, useShortcuts } from '@weesper/hooks'
 import { useMemo } from 'react'
 import { Page, QueryError } from '@/components'
 import { AiEnhancements } from './AiEnhancements'

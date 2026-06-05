@@ -1,14 +1,14 @@
-# OpenBisbis
+# Weesper
 
-OpenBisbis is a **desktop speech-to-text application** built with Electron. It records audio via the system microphone, transcribes it locally, and optionally enhances the transcript with a local LLM — then automatically pastes the result into your active application. 
+Weesper is a **desktop speech-to-text application** built with Electron. It records audio via the system microphone, transcribes it locally, and optionally enhances the transcript with a local LLM — then automatically pastes the result into your active application. 
 
 **Everything runs 100% offline on your machine.** No cloud dependencies, no data leaves your computer.
 
-> **Note:** Currently, OpenBisbis is only supported on **macOS (Apple Silicon / ARM64)**.
+> **Note:** Currently, Weesper is only supported on **macOS (Apple Silicon / ARM64)**.
 
 ## Core Technologies
 
-OpenBisbis is powered by several robust open-source technologies under the hood:
+Weesper is powered by several robust open-source technologies under the hood:
 
 - **[whisper.cpp](https://github.com/ggerganov/whisper.cpp):** Used for fast, high-quality, on-device speech-to-text transcription.
 - **[llama.cpp](https://github.com/ggerganov/llama.cpp):** Used as a local LLM server to enhance, reformat, or rewrite the transcribed text based on custom user prompts.
@@ -30,8 +30,8 @@ This project uses Yarn workspaces. Never use `npm`.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-org/open-bisbis.git
-   cd open-bisbis
+   git clone https://github.com/your-org/weesper.git
+   cd weesper
    ```
 
 2. **Install dependencies:**
@@ -60,10 +60,10 @@ This project uses Yarn workspaces. Never use `npm`.
 
 ## Architecture Overview
 
-OpenBisbis is structured as a monorepo using Yarn workspaces:
+Weesper is structured as a monorepo using Yarn workspaces:
 
 ```text
-open-bisbis/
+weesper/
 ├── apps/
 │   └── admin/             # The core Electron application
 │       ├── electron/      # Main process (Node.js, File System, Server Management)

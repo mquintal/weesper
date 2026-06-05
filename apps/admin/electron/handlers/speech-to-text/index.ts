@@ -1,13 +1,13 @@
 import { shortcutsRepo } from '@electron/database'
-import type { Model } from '@open-bisbis/ipc'
+import type { Model } from '@weesper/ipc'
 import {
   registerRecordingChunk,
   registerStartRecording,
   registerStopRecording,
   updateWidgetStatus,
   widgetWindowWillHide,
-} from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
+} from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 import type { BrowserWindow, IpcMain } from 'electron'
 import { cleanText } from './clean-text'
 import { processAudio } from './process-audio'

@@ -1,6 +1,6 @@
-import { cancelDownloadModel, deleteModel, downloadModel, getListModels, selectModel } from '@open-bisbis/ipc'
-import { logger } from '@open-bisbis/logger'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { cancelDownloadModel, deleteModel, downloadModel, getListModels, selectModel } from '@weesper/ipc'
+import { logger } from '@weesper/logger'
 
 export const useModels = () => {
   return useQuery({

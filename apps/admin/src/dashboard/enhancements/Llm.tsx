@@ -1,5 +1,5 @@
-import { useCancelDownloadLlm, useDownloadLlm, useSelectLlm } from '@open-bisbis/hooks'
 import { MagicWandIcon } from '@radix-ui/react-icons'
+import { useCancelDownloadLlm, useDownloadLlm, useSelectLlm } from '@weesper/hooks'
 import { Card, useToast } from '@/components'
 import { CardFooter } from '../models/CardFooter'
 import { useDownload } from '../models/useDownload'

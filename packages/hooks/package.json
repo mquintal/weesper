@@ -1,5 +1,5 @@
 {
-  "name": "@open-bisbis/hooks",
+  "name": "@weesper/hooks",
   "version": "0.0.1",
   "private": true,
   "main": "./src/index.ts",
@@ -11,9 +11,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@open-bisbis/ipc": "workspace:*",
-    "@open-bisbis/logger": "workspace:*",
     "@tanstack/react-query": "^5.100.9",
+    "@weesper/ipc": "workspace:*",
+    "@weesper/logger": "workspace:*",
     "react": "^19.2.5"
   },
   "devDependencies": {
