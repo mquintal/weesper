@@ -42,10 +42,6 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install --immutable
-      
-      - name: Install build dependencies (nasm)
-        if: steps.cache-native-deps.outputs.cache-hit != 'true'
-        run: brew install nasm
 
       - name: Cache Native Dependencies
         id: cache-native-deps
@@ -56,6 +52,10 @@ jobs:
             apps/admin/resources/whisper.cpp
             apps/admin/resources/llama.cpp
           key: native-deps-${{ runner.os }}-${{ runner.arch }}-ffmpeg-${{ env.FFMPEG_VERSION }}-whisper-${{ env.WHISPER_VERSION }}-llama-${{ env.LLAMA_VERSION }}
+
+      - name: Install build dependencies (nasm)
+        if: steps.cache-native-deps.outputs.cache-hit != 'true'
+        run: brew install nasm
 
       - name: Build Native Dependencies
         if: steps.cache-native-deps.outputs.cache-hit != 'true'
@@ -82,7 +82,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-artifacts-${{ matrix.arch }}
           path: |
@@ -103,10 +103,11 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: release-artifacts-*
           merge-multiple: true
+          path: apps/admin/release
 
       - name: Create Release
         uses: softprops/action-gh-release@v3
