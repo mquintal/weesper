@@ -16,6 +16,10 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
+    env:
+      FFMPEG_VERSION: 'n8.1.1'
+      WHISPER_VERSION: 'v1.8.4'
+      LLAMA_VERSION: 'b9265'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -33,7 +37,18 @@ jobs:
       - name: Install Dependencies
         run: yarn install --immutable
 
+      - name: Cache Native Dependencies
+        id: cache-native-deps
+        uses: actions/cache@v5
+        with:
+          path: |
+            apps/admin/resources/ffmpeg
+            apps/admin/resources/whisper.cpp
+            apps/admin/resources/llama.cpp
+          key: native-deps-${{ runner.os }}-${{ runner.arch }}-ffmpeg-${{ env.FFMPEG_VERSION }}-whisper-${{ env.WHISPER_VERSION }}-llama-${{ env.LLAMA_VERSION }}
+
       - name: Build Native Dependencies
+        if: steps.cache-native-deps.outputs.cache-hit != 'true'
         run: yarn build-deps
 
       - name: Build and Package

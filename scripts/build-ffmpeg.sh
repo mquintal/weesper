@@ -6,14 +6,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../apps/admin" && pwd )"
 RESOURCES_DIR="$PROJECT_ROOT/resources"
 
+# Version (can be overridden via env var, e.g. from CI)
+FFMPEG_VERSION="${FFMPEG_VERSION:-n8.1.1}"
+
 # Create a temporary directory for cloning
 TEMP_DIR=$(mktemp -d)
 
 # Ensure temp directory is removed on exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-echo "Cloning ffmpeg to $TEMP_DIR..."
-git clone -b n8.1.1 --depth 1 https://git.ffmpeg.org/ffmpeg.git "$TEMP_DIR"
+echo "Cloning ffmpeg $FFMPEG_VERSION to $TEMP_DIR..."
+git clone -b "$FFMPEG_VERSION" --depth 1 https://git.ffmpeg.org/ffmpeg.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 

@@ -6,14 +6,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../apps/admin" && pwd )"
 RESOURCES_DIR="$PROJECT_ROOT/resources"
 
+# Version (can be overridden via env var, e.g. from CI)
+WHISPER_VERSION="${WHISPER_VERSION:-v1.8.4}"
+
 # Create a temporary directory for cloning
 TEMP_DIR=$(mktemp -d)
 
 # Ensure temp directory is removed on exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-echo "Cloning whisper.cpp tag v1.8.4 to $TEMP_DIR..."
-git clone --depth 1 --branch v1.8.4 https://github.com/ggml-org/whisper.cpp.git "$TEMP_DIR"
+echo "Cloning whisper.cpp $WHISPER_VERSION to $TEMP_DIR..."
+git clone --depth 1 --branch "$WHISPER_VERSION" https://github.com/ggml-org/whisper.cpp.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 

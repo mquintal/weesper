@@ -6,14 +6,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../apps/admin" && pwd )"
 RESOURCES_DIR="$PROJECT_ROOT/resources"
 
+# Version (can be overridden via env var, e.g. from CI)
+LLAMA_VERSION="${LLAMA_VERSION:-b9265}"
+
 # Create a temporary directory for cloning
 TEMP_DIR=$(mktemp -d)
 
 # Ensure temp directory is removed on exit
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-echo "Cloning llama.cpp to $TEMP_DIR..."
-git clone --depth 1 --branch b9265 https://github.com/ggml-org/llama.cpp.git "$TEMP_DIR"
+echo "Cloning llama.cpp $LLAMA_VERSION to $TEMP_DIR..."
+git clone --depth 1 --branch "$LLAMA_VERSION" https://github.com/ggml-org/llama.cpp.git "$TEMP_DIR"
 
 cd "$TEMP_DIR"
 
