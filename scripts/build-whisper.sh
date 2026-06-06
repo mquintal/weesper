@@ -29,7 +29,14 @@ sed -i '' '1i\
 
 echo "Compiling whisper.cpp (static)..."
 NPROC=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 2)
-cmake -B build -DBUILD_SHARED_LIBS=OFF -DWHISPER_METAL=ON -DWHISPER_FLASH_ATTN=ON -DCMAKE_OSX_ARCHITECTURES="arm64" -DGGML_NATIVE=OFF -DWHISPER_NATIVE=OFF && cmake --build build -j $NPROC --config Release
+
+ARCH="$(uname -m)"
+EXTRA_FLAGS=""
+if [ "$ARCH" = "x86_64" ]; then
+  EXTRA_FLAGS="-DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
+fi
+
+cmake -B build -DBUILD_SHARED_LIBS=OFF -DWHISPER_METAL=ON -DWHISPER_FLASH_ATTN=ON -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DGGML_NATIVE=OFF -DWHISPER_NATIVE=OFF $EXTRA_FLAGS && cmake --build build -j $NPROC --config Release
 
 echo "Ensuring resources directory exists..."
 mkdir -p "$RESOURCES_DIR"

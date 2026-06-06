@@ -9,13 +9,23 @@ import os from 'node:os'
 export function getOptimalThreadCount(): number {
   if (process.platform === 'darwin') {
     try {
+      // Apple Silicon: use performance cores only (excludes efficiency cores)
       const output = execSync('sysctl -n hw.perflevel0.physicalcpu', { encoding: 'utf8' }).trim()
       const pCores = Number.parseInt(output, 10)
       if (!Number.isNaN(pCores) && pCores > 0) {
         return pCores
       }
     } catch {
-      // Silently fall back to generic calculation
+      // Intel Mac: hw.perflevel0 doesn't exist, use physical CPU count
+      try {
+        const output = execSync('sysctl -n hw.physicalcpu', { encoding: 'utf8' }).trim()
+        const physCores = Number.parseInt(output, 10)
+        if (!Number.isNaN(physCores) && physCores > 0) {
+          return physCores
+        }
+      } catch {
+        // Fall through to generic calculation
+      }
     }
   }
 

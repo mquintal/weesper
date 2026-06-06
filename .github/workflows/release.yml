@@ -12,10 +12,16 @@ on:
         type: string
 
 jobs:
-  build-and-release:
-    runs-on: macos-latest
-    permissions:
-      contents: write
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            arch: arm64
+          - os: macos-13
+            arch: x64
+    runs-on: ${{ matrix.os }}
     env:
       FFMPEG_VERSION: 'n8.1.1'
       WHISPER_VERSION: 'v1.8.4'
@@ -51,13 +57,17 @@ jobs:
         if: steps.cache-native-deps.outputs.cache-hit != 'true'
         run: yarn build-deps
 
-      - name: Build and Package
-        run: yarn build
+      - name: Build JS
+        run: yarn build:ci
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+
+      - name: Package with Electron Builder
+        run: yarn workspace admin build:ci-electron --mac --${{ matrix.arch }}
+        env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Code Signing
           CSC_LINK: ${{ secrets.CSC_LINK }}
@@ -66,6 +76,33 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ matrix.arch }}
+          path: |
+            apps/admin/release/*/weesper_v*.dmg
+            apps/admin/release/*/*.zip
+            apps/admin/release/*/latest-mac.yml
+          retention-days: 1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-artifacts-*
+          merge-multiple: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v3
