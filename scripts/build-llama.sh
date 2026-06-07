@@ -38,11 +38,13 @@ NPROC=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 2)
 
 ARCH="$(uname -m)"
 EXTRA_FLAGS=""
+METAL_FLAG="ON"
 if [ "$ARCH" = "x86_64" ]; then
   EXTRA_FLAGS="-DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
+  METAL_FLAG="OFF"
 fi
 
-cmake -B build -DBUILD_SHARED_LIBS=OFF -DLLAMA_METAL=ON -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DGGML_NATIVE=OFF -DLLAMA_NATIVE=OFF $EXTRA_FLAGS && cmake --build build -j $NPROC --config Release
+cmake -B build -DBUILD_SHARED_LIBS=OFF -DLLAMA_METAL=$METAL_FLAG -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DGGML_NATIVE=OFF -DLLAMA_NATIVE=OFF $EXTRA_FLAGS && cmake --build build -j $NPROC --config Release
 
 echo "Ensuring resources directory exists..."
 mkdir -p "$RESOURCES_DIR"
