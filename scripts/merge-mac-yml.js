@@ -50,10 +50,8 @@ function mergeMacYml() {
       
       mergedContent.files = files;
 
-      // Remove the single path and sha512 since we have multiple files
-      // modern electron-updater prefers the files array
-      delete mergedContent.path;
-      delete mergedContent.sha512;
+      // We retain the path and sha512 from the base content (which comes from one of the archs)
+      // as a fallback for older electron-updater clients.
 
       fs.writeFileSync(outPath, yaml.stringify(mergedContent), 'utf8');
       console.log(`Successfully merged latest-mac.yml in ${subdir}`);
