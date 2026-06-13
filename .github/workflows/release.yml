@@ -81,6 +81,12 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      - name: Rename latest-mac.yml
+        run: |
+          for f in apps/admin/release/*/latest-mac.yml; do
+            mv "$f" "${f%.yml}-${{ matrix.arch }}.yml"
+          done
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -88,7 +94,7 @@ jobs:
           path: |
             apps/admin/release/*/weesper_v*.dmg
             apps/admin/release/*/*.zip
-            apps/admin/release/*/latest-mac.yml
+            apps/admin/release/*/latest-mac-${{ matrix.arch }}.yml
           retention-days: 1
 
   release:
@@ -108,6 +114,20 @@ jobs:
           pattern: release-artifacts-*
           merge-multiple: true
           path: apps/admin/release
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install Dependencies
+        run: yarn install --immutable
+
+      - name: Merge latest-mac.yml
+        run: node scripts/merge-mac-yml.js
 
       - name: Create Release
         uses: softprops/action-gh-release@v3

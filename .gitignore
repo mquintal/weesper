@@ -20,3 +20,6 @@ node_modules
 
 *storybook.log
 storybook-static
+
+.agents
+skills-lock.json
