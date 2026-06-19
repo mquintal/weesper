@@ -4042,6 +4042,7 @@ __metadata:
     tailwindcss: "npm:4.2"
     tree-kill: "npm:^1.2.2"
     typescript: "npm:^6.0.3"
+    uiohook-napi: "npm:^1.5.5"
     valibot: "npm:^1.3.1"
     vite: "npm:^8.0.10"
     vite-plugin-electron: "npm:^0.29.1"
@@ -7485,6 +7486,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-gyp-build@npm:^4.8.4":
+  version: 4.8.4
+  resolution: "node-gyp-build@npm:4.8.4"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 10c0/444e189907ece2081fe60e75368784f7782cfddb554b60123743dfb89509df89f1f29c03bbfa16b3a3e0be3f48799a4783f487da6203245fa5bed239ba7407e1
+  languageName: node
+  linkType: hard
+
 "node-gyp@npm:^12.2.0, node-gyp@npm:latest":
   version: 12.3.0
   resolution: "node-gyp@npm:12.3.0"
@@ -9364,6 +9376,16 @@ __metadata:
   version: 1.5.0
   resolution: "uint8array-extras@npm:1.5.0"
   checksum: 10c0/0e74641ac7dadb02eadefc1ccdadba6010e007757bda824960de3c72bbe2b04e6d3af75648441f412148c4103261d54fcb60be45a2863beb76643a55fddba3bd
+  languageName: node
+  linkType: hard
+
+"uiohook-napi@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "uiohook-napi@npm:1.5.5"
+  dependencies:
+    node-gyp: "npm:latest"
+    node-gyp-build: "npm:^4.8.4"
+  checksum: 10c0/4ed33da8ae677922a7dfed141b1e9508e877c2999bc8ef6f25e4e28ba08fdf77296e7f44abc4dbbf331b6e905ecd42109da87a9bd48b56a04e9459d4c45b8e90
   languageName: node
   linkType: hard
 

@@ -9,6 +9,7 @@ const store = new Store<{
     language: string
   }
   selectedLlm?: string
+  shortcutMode: 'toggle' | 'hold'
   downloadedModels: Record<string, string>
   downloadedLlms: Record<string, string>
 }>({
@@ -17,6 +18,7 @@ const store = new Store<{
     micGrant: 'idle',
     micInUse: '',
     hasOnboarded: false,
+    shortcutMode: 'hold',
     downloadedModels: {},
     downloadedLlms: {},
   },
@@ -31,6 +33,9 @@ export const setSelectedModel = (id: string, language: string) => store.set('sel
 
 export const getSelectedLlm = () => store.get('selectedLlm')
 export const setSelectedLlm = (id: string) => store.set('selectedLlm', id)
+
+export const getShortcutMode = () => store.get('shortcutMode')
+export const setShortcutMode = (mode: 'toggle' | 'hold') => store.set('shortcutMode', mode)
 
 export const getMicInUse = () => store.get('micInUse')
 export const setMicInUse = (id: string) => store.set('micInUse', id)

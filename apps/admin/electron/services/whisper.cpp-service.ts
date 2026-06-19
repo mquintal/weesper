@@ -4,7 +4,7 @@ import { getSelectedModel } from '@weesper/config'
 import { logger } from '@weesper/logger'
 import * as v from 'valibot'
 import { models, RESOURCES_PATH } from '../config'
-import { getOptimalThreadCount } from './cpu'
+import { getOptimalThreadCount } from '../utils/cpu'
 import { createManagedService } from './server'
 
 const WHISPER_SERVER_PORT = Number(process.env.WHISPER_SERVER_PORT || 8760)

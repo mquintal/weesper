@@ -1,5 +1,7 @@
 import { useMicSettings, useTranscribe } from '@weesper/hooks'
 import {
+  listenForStartRecording,
+  listenForStopRecording,
   listenForToggleRecording,
   pasteText,
   sendRecordingChunk,
@@ -33,12 +35,27 @@ export const useRecordingManager = () => {
   const toggleRef = useRef(toggleRecording)
   toggleRef.current = toggleRecording
 
+  const startRef = useRef<() => void>(null!)
+  const stopRef = useRef<(id: string) => Promise<void>>(null!)
+  const transcribingRef = useRef(false)
+
   useEffect(() => {
-    const unsubscribe = listenForToggleRecording(window.ipcRenderer, (shortcutId) => {
+    const unsubToggle = listenForToggleRecording(window.ipcRenderer, (shortcutId) => {
       toggleRef.current(shortcutId)
     })
+    const unsubStart = listenForStartRecording(window.ipcRenderer, () => {
+      if (transcribingRef.current) return
+      startRef.current()
+    })
+    const unsubStop = listenForStopRecording(window.ipcRenderer, (shortcutId) => {
+      stopRef.current(shortcutId).catch((err) => {
+        logger.error('[Recording Manager] Failed to stop recording', { error: err?.message || String(err) })
+      })
+    })
     return () => {
-      unsubscribe()
+      unsubToggle()
+      unsubStart()
+      unsubStop()
     }
   }, [])
 
@@ -195,5 +212,11 @@ export const useRecordingManager = () => {
       mediaRecorder.stop()
     })
   }
+
+  // Refs for start/stop/transcribing are assigned here so the useEffect above can reference them
+  startRef.current = startRecording
+  stopRef.current = stopRecording
+  transcribingRef.current = transcribing
+
   return { isRecording, stream: streamRef.current }
 }

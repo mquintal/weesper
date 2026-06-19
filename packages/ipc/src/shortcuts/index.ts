@@ -1,17 +1,25 @@
-export type { CreateShortcut, Shortcut } from './shortcuts'
+export type { CreateShortcut, Shortcut, ShortcutMode } from './shortcuts'
 export {
   createShortcut,
   deleteShortcut,
   getDefaultShortcut,
   getListShortcuts,
+  getShortcutMode,
+  listenForStartRecording,
+  listenForStopRecording,
   listenForToggleRecording,
   registerCreateShortcut,
   registerDeleteShortcut,
   registerGetDefaultShortcut,
+  registerGetShortcutMode,
   registerListShortcuts,
   registerSetDefaultShortcut,
+  registerSetShortcutMode,
   registerUpdateShortcut,
+  sendStartRecording,
+  sendStopRecording,
   sendToggleRecording,
   setDefaultShortcut,
+  setShortcutMode,
   updateShortcut,
 } from './shortcuts'

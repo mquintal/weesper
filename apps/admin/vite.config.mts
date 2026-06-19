@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
               sourcemap: true,
               minify: true,
               rollupOptions: {
-                external: ['better-sqlite3', 'electron-updater'],
+                external: ['better-sqlite3', 'electron-updater', 'uiohook-napi'],
               },
             },
             resolve: {

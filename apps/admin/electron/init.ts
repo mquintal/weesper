@@ -1,4 +1,6 @@
 import { shortcutsRepo } from '@electron/database'
+import { getShortcutMode } from '@weesper/config'
+import { sendStartRecording, sendStopRecording } from '@weesper/ipc'
 import { app, type BrowserWindow, ipcMain, session } from 'electron'
 import { createTray, createWidgetWindow, createWindow } from './components'
 import {
@@ -17,9 +19,16 @@ import {
   updaterHandler,
 } from './handlers'
 import { services } from './services'
+import { GlobalHookService } from './utils/global-hook'
 
 let win: BrowserWindow | null
 let widgetWin: BrowserWindow | undefined
+
+const hookService = new GlobalHookService({
+  getWindow: () => widgetWin,
+  sendStartRecording,
+  sendStopRecording,
+})
 
 onboardingHandler(ipcMain)
 recordingsHandler(ipcMain)
@@ -43,11 +52,13 @@ micHandler(ipcMain)
 pasteHandler(ipcMain)
 const { registerShortcut, unregisterAllShortcuts, ensureDefaultShortcut } = shortcutsHandler(ipcMain, {
   getWindow: () => widgetWin,
+  hookService,
 })
 updaterHandler(ipcMain)
 
 app.on('will-quit', async () => {
   unregisterAllShortcuts()
+  hookService.stop()
   await services.llama.stop()
   await services.whisper.stop()
 })
@@ -99,10 +110,16 @@ app.whenReady().then(async () => {
 
   await ensureDefaultShortcut()
 
+  const mode = getShortcutMode()
+
+  if (mode === 'hold') {
+    hookService.start()
+  }
+
   const activeShortcuts = await shortcutsRepo.list()
 
   activeShortcuts.forEach((row) => {
-    registerShortcut(row.id, row.shortcut)
+    registerShortcut(row.id, row.shortcut, mode)
   })
 
   services.updater.init(() => win)

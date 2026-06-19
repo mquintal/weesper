@@ -5,7 +5,10 @@ import {
   deleteShortcut,
   getDefaultShortcut,
   getListShortcuts,
+  getShortcutMode,
+  type ShortcutMode,
   setDefaultShortcut,
+  setShortcutMode,
   updateShortcut,
 } from '@weesper/ipc'
 import { logger } from '@weesper/logger'
@@ -93,6 +96,40 @@ export const useUpdateShortcut = () => {
     onSuccess: (_, { id }) => {
       logger.info(`[useUpdateShortcut] Successfully updated shortcut ${id}`)
       queryClient.invalidateQueries({ queryKey: ['shortcuts', 'list'] })
+    },
+  })
+}
+
+export const useShortcutMode = () => {
+  return useQuery({
+    queryKey: ['shortcuts', 'mode'],
+    queryFn: async () => {
+      const result = await getShortcutMode(window.ipcRenderer)
+      if (result.status === 'error') {
+        const errorMsg = result.data.join('\n')
+        logger.error('[useShortcutMode] Failed to fetch shortcut mode', { error: errorMsg })
+        throw new Error(errorMsg)
+      }
+      return result.data
+    },
+  })
+}
+
+export const useSetShortcutMode = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (mode: ShortcutMode) => {
+      const result = await setShortcutMode(window.ipcRenderer, mode)
+      if (result.status === 'error') {
+        const errorMsg = result.data.join('\n')
+        logger.error(`[useSetShortcutMode] Failed to set shortcut mode to ${mode}`, { error: errorMsg })
+        throw new Error(errorMsg)
+      }
+      return result.data
+    },
+    onSuccess: (_, mode) => {
+      logger.info(`[useSetShortcutMode] Successfully set shortcut mode to ${mode}`)
+      queryClient.invalidateQueries({ queryKey: ['shortcuts', 'mode'] })
     },
   })
 }

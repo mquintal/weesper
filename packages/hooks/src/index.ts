@@ -26,6 +26,8 @@ export {
   useDefaultShortcut,
   useDeleteShortcut,
   useSetDefaultShortcut,
+  useSetShortcutMode,
+  useShortcutMode,
   useShortcuts,
   useUpdateShortcut,
 } from './shortcuts'

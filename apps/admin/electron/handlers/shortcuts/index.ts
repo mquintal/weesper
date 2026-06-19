@@ -1,25 +1,43 @@
 import crypto from 'node:crypto'
 import { shortcutsRepo } from '@electron/database'
+import { getShortcutMode, setShortcutMode } from '@weesper/config'
 import {
   registerCreateShortcut,
   registerDeleteShortcut,
   registerGetDefaultShortcut,
+  registerGetShortcutMode,
   registerListShortcuts,
   registerSetDefaultShortcut,
+  registerSetShortcutMode,
   registerUpdateShortcut,
+  type ShortcutMode,
 } from '@weesper/ipc'
-import { type BrowserWindow, globalShortcut as electronGlobalShortcut, type IpcMain } from 'electron'
+import { logger } from '@weesper/logger'
+import { type BrowserWindow, globalShortcut, type IpcMain } from 'electron'
+import type { GlobalHookService } from '../../utils/global-hook'
 import { toElectronShortcut, toUIShortcut } from './mapping'
-import { registerShortcutHandler } from './registerShortcutHandler'
+import { registerShortcutHandler, unregisterAllShortcuts } from './registerShortcutHandler'
 
 type Options = {
   getWindow: () => BrowserWindow | undefined | null
+  hookService: GlobalHookService
   repo?: typeof shortcutsRepo
-  globalShortcut?: typeof electronGlobalShortcut
+}
+
+const reRegisterAllShortcuts = async (
+  repo: typeof shortcutsRepo,
+  mode: ShortcutMode,
+  hookService: GlobalHookService,
+  getWindow: () => BrowserWindow | undefined | null,
+) => {
+  const activeShortcuts = await repo.list()
+  activeShortcuts.forEach((row) => {
+    registerShortcutHandler(row.id, row.shortcut, getWindow, mode, hookService)
+  })
 }
 
 export const handler = (ipcMain: IpcMain, options: Options) => {
-  const { repo = shortcutsRepo, globalShortcut = electronGlobalShortcut, getWindow } = options
+  const { repo = shortcutsRepo, getWindow, hookService } = options
 
   const buildShortcutVersion = (
     shortcutId: string,
@@ -36,6 +54,29 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
     prompt,
   })
 
+  registerGetShortcutMode(ipcMain, () => {
+    return getShortcutMode()
+  })
+
+  registerSetShortcutMode(ipcMain, async (mode: ShortcutMode) => {
+    setShortcutMode(mode)
+
+    // Re-register all shortcuts with the new mode
+    globalShortcut.unregisterAll()
+    hookService.unregisterAll()
+
+    if (mode === 'hold') {
+      hookService.start()
+    } else {
+      hookService.stop()
+    }
+
+    await reRegisterAllShortcuts(repo, mode, hookService, getWindow)
+
+    logger.info(`[Shortcuts Handler] Switched to ${mode} mode and re-registered all shortcuts`)
+    return true
+  })
+
   registerGetDefaultShortcut(ipcMain, async () => {
     const data = await repo.findById('default')
     if (!data) return '' // fallback if no default
@@ -44,6 +85,7 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
 
   registerSetDefaultShortcut(ipcMain, async (uiShortcut: string) => {
     const electronShortcut = toElectronShortcut(uiShortcut)
+    const mode = getShortcutMode()
 
     const existing = await repo.findById('default')
     const newVersion = existing ? existing.currentVersion + 1 : 1
@@ -56,7 +98,7 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
       await repo.update('default', newVersion, versionData)
     }
 
-    registerShortcutHandler('default', electronShortcut, getWindow)
+    registerShortcutHandler('default', electronShortcut, getWindow, mode, hookService)
     return true
   })
 
@@ -74,6 +116,7 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
 
   registerCreateShortcut(ipcMain, async (shortcut: { name: string; shortcut: string; prompt: string }) => {
     const electronShortcut = toElectronShortcut(shortcut.shortcut)
+    const mode = getShortcutMode()
     const shortcutId = crypto.randomUUID()
 
     await repo.create(
@@ -81,7 +124,7 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
       buildShortcutVersion(shortcutId, 1, shortcut.name, electronShortcut, shortcut.prompt),
     )
 
-    registerShortcutHandler(shortcutId, electronShortcut, getWindow)
+    registerShortcutHandler(shortcutId, electronShortcut, getWindow, mode, hookService)
     return true
   })
 
@@ -91,6 +134,7 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
 
     const newVersion = existing.currentVersion + 1
     const electronShortcut = toElectronShortcut(shortcut.shortcut)
+    const mode = getShortcutMode()
 
     await repo.update(
       id,
@@ -98,14 +142,15 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
       buildShortcutVersion(id, newVersion, shortcut.name, electronShortcut, shortcut.prompt),
     )
 
-    registerShortcutHandler(id, electronShortcut, getWindow)
+    registerShortcutHandler(id, electronShortcut, getWindow, mode, hookService)
     return true
   })
 
   registerDeleteShortcut(ipcMain, async (id: string) => {
     await repo.softDelete(id)
+    const mode = getShortcutMode()
 
-    registerShortcutHandler(id, '', getWindow)
+    registerShortcutHandler(id, '', getWindow, mode, hookService)
     return true
   })
 
@@ -122,11 +167,9 @@ export const handler = (ipcMain: IpcMain, options: Options) => {
         console.log('Created default shortcut: CommandOrControl+Alt+R')
       }
     },
-    registerShortcut: (id: string, shortcut: string) => {
-      registerShortcutHandler(id, shortcut, getWindow)
+    registerShortcut: (id: string, shortcut: string, mode?: ShortcutMode) => {
+      registerShortcutHandler(id, shortcut, getWindow, mode ?? getShortcutMode(), hookService)
     },
-    unregisterAllShortcuts: () => {
-      globalShortcut.unregisterAll()
-    },
+    unregisterAllShortcuts,
   }
 }

@@ -4,13 +4,28 @@ vi.mock('@electron/database', () => ({
   shortcutsRepo: {},
 }))
 
+vi.mock('@weesper/config', () => ({
+  getShortcutMode: () => 'toggle',
+  setShortcutMode: () => {},
+}))
+
 vi.mock('node:crypto', () => ({
   default: {
     randomUUID: vi.fn().mockReturnValue('uuid'),
   },
 }))
 
+import type { GlobalHookService } from '../../utils/global-hook'
 import { handler } from './index'
+
+const mockHookService = {
+  register: vi.fn(),
+  unregister: vi.fn(),
+  unregisterAll: vi.fn(),
+  start: vi.fn(),
+  stop: vi.fn(),
+  getIsRunning: vi.fn().mockReturnValue(false),
+} as unknown as GlobalHookService
 
 describe('shortcuts handler', () => {
   let mockIpcMain: any
@@ -29,7 +44,7 @@ describe('shortcuts handler', () => {
 
   it('getDefaultShortcut returns UI formatted shortcut', async () => {
     mockRepo.findById.mockResolvedValue({ shortcut: 'CommandOrControl+R' })
-    handler(mockIpcMain, { getWindow: () => null, repo: mockRepo })
+    handler(mockIpcMain, { getWindow: () => null, repo: mockRepo, hookService: mockHookService })
 
     const callback = mockIpcMain.handle.mock.calls.find((params: string[]) => params[0] === 'shortcuts/default/get')[1]
     const result = await callback()
@@ -43,6 +58,7 @@ describe('shortcuts handler', () => {
     handler(mockIpcMain, {
       getWindow: () => null,
       repo: mockRepo,
+      hookService: mockHookService,
     })
 
     const callback = mockIpcMain.handle.mock.calls.find((params: string[]) => params[0] === 'shortcuts/default/set')[1]
@@ -77,7 +93,7 @@ describe('shortcuts handler', () => {
       },
     ]
     mockRepo.list.mockResolvedValue(mockData)
-    handler(mockIpcMain, { getWindow: () => null, repo: mockRepo })
+    handler(mockIpcMain, { getWindow: () => null, repo: mockRepo, hookService: mockHookService })
 
     const callback = mockIpcMain.handle.mock.calls.find((params: string[]) => params[0] === 'shortcuts/list')[1]
     const result = await callback()
@@ -90,7 +106,11 @@ describe('shortcuts handler', () => {
 
   it('ensureDefaultShortcut creates default if not exists', async () => {
     mockRepo.findById.mockResolvedValue(null)
-    const { ensureDefaultShortcut } = handler(mockIpcMain, { getWindow: () => null, repo: mockRepo })
+    const { ensureDefaultShortcut } = handler(mockIpcMain, {
+      getWindow: () => null,
+      repo: mockRepo,
+      hookService: mockHookService,
+    })
 
     await ensureDefaultShortcut()
 
@@ -102,7 +122,11 @@ describe('shortcuts handler', () => {
 
   it('ensureDefaultShortcut does nothing if default exists', async () => {
     mockRepo.findById.mockResolvedValue({ id: 'default' })
-    const { ensureDefaultShortcut } = handler(mockIpcMain, { getWindow: () => null, repo: mockRepo })
+    const { ensureDefaultShortcut } = handler(mockIpcMain, {
+      getWindow: () => null,
+      repo: mockRepo,
+      hookService: mockHookService,
+    })
 
     await ensureDefaultShortcut()
 

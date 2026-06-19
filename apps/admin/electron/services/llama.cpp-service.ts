@@ -3,7 +3,7 @@ import path from 'node:path'
 import { getSelectedLlm } from '@weesper/config'
 import * as v from 'valibot'
 import { llms, RESOURCES_PATH } from '../config'
-import { getOptimalThreadCount } from './cpu'
+import { getOptimalThreadCount } from '../utils/cpu'
 import { createManagedService } from './server'
 
 const LLAMA_SERVER_PORT = Number(process.env.LLAMA_SERVER_PORT || 8765)
