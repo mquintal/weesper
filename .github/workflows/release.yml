@@ -124,7 +124,7 @@ jobs:
         run: corepack enable
 
       - name: Install Dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --mode=skip-build
 
       - name: Merge latest-mac.yml
         run: node scripts/merge-mac-yml.js
