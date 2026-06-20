@@ -1,0 +1,48 @@
+---
+const steps = [
+  {
+    number: '01',
+    title: 'Record',
+    description: 'Press your hotkey to start recording. Weesper captures audio from your microphone.',
+  },
+  {
+    number: '02',
+    title: 'Transcribe',
+    description: 'Processes the audio using local models, converting speech to text with high accuracy.',
+  },
+  {
+    number: '03',
+    title: 'Enhance (optional)',
+    description: 'An LLM running locally can rewrite, correct grammar, or reformat the transcript based on your custom prompts.',
+  },
+  {
+    number: '04',
+    title: 'Paste',
+    description: 'The final text is automatically pasted into your active application — docs, email, chat, code editor, etc.',
+  },
+]
+---
+
+<section id="how-it-works" class="border-t border-white/10 px-6 py-24">
+  <div class="mx-auto max-w-4xl">
+    <h2 class="text-center text-3xl font-bold text-white sm:text-4xl">How it works</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-center text-gray-400">
+      It runs entirely on your machine.
+    </p>
+    <div class="mt-16 space-y-12">
+      {
+        steps.map((step) => (
+          <div class="flex items-start gap-6">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FFAD00]/10 text-sm font-bold text-[#FFAD00]">
+              {step.number}
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-white">{step.title}</h3>
+              <p class="mt-2 leading-relaxed text-gray-400">{step.description}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
