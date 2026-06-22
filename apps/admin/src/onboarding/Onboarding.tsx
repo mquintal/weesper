@@ -12,7 +12,7 @@ import { Models } from './Models'
 export const Onboarding = () => {
   const { canContinue, doContinue } = useOnboarding()
   const { data: languages = [], isError: isLanguagesError } = useLanguages()
-  const { mutate: selectModel } = useSelectModel()
+  const { mutate: selectModel, isPending } = useSelectModel()
   const { toast } = useToast()
   const [selectedLanguage, setSelectedLanguage] = useState('en')
   const [selectedModelId, setSelectedModelId] = useState('')
@@ -92,11 +92,15 @@ export const Onboarding = () => {
             <button
               type="button"
               className="btn btn-primary btn-block btn-lg shadow-xl shadow-primary/20"
-              disabled={!isReady}
+              disabled={!isReady || isPending}
               onClick={handleStart}
             >
               Get Started
-              <ArrowRightIcon className="w-6 h-6" />
+              {isPending ? (
+                <span className="loading loading-spinner ml-2"></span>
+              ) : (
+                <ArrowRightIcon className="w-6 h-6 ml-2" />
+              )}
             </button>
             {!canContinue && (
               <p className="text-sm text-base-content/50 mt-4 font-medium text-center">
