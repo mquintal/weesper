@@ -25,3 +25,5 @@ storybook-static
 .agents
 skills-lock.json
 .vscode
+.opencode
+graphify-out
