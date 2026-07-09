@@ -1,8 +1,6 @@
 import type { IpcMainInvokeEvent } from 'electron'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  pasteText,
-  registerPasteText,
   registerRecordingChunk,
   registerStartRecording,
   registerStopRecording,
@@ -107,19 +105,6 @@ describe('Speech to Text IPC module', () => {
       expect(received).toBeInstanceOf(ArrayBuffer)
       expect(new Uint8Array(received)).toEqual(new Uint8Array([5, 6, 7, 8]))
     })
-
-    it('registerPasteText registers topic', async () => {
-      const mockHandler = vi.fn().mockResolvedValue(undefined)
-      registerPasteText(mockIpcMain, mockHandler)
-
-      expect(mockIpcMain.handle).toHaveBeenCalledWith(TOPICS.PASTE_TEXT, expect.any(Function))
-
-      const callback = mockIpcMain.handle.mock.calls[0][1]
-      const result = await callback({} as IpcMainInvokeEvent, 'text to paste')
-
-      expect(result.status).toBe('success')
-      expect(mockHandler).toHaveBeenCalledWith('text to paste')
-    })
   })
 
   describe('Renderer Process callers', () => {
@@ -136,14 +121,6 @@ describe('Speech to Text IPC module', () => {
       const result = await stopRecording(mockIpcRenderer, 'optional prompt')
 
       expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(TOPICS.STOP, 'optional prompt')
-      expect(result.status).toBe('success')
-    })
-
-    it('pasteText invokes topic', async () => {
-      mockIpcRenderer.invoke.mockResolvedValue({ status: 'success', data: undefined })
-      const result = await pasteText(mockIpcRenderer, 'text to paste')
-
-      expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(TOPICS.PASTE_TEXT, 'text to paste')
       expect(result.status).toBe('success')
     })
 

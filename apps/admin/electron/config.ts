@@ -28,6 +28,8 @@ export const getResourcePath = (filename: string, type: 'models' | 'llms' | 'db'
   return userDataPath
 }
 
+export const VAD_MODEL_PATH = path.join(RESOURCES_PATH, 'whisper.cpp/vad/ggml-silero-v6.2.0.bin')
+
 export const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL
 export const RENDERER_DIST = path.join(APP_ROOT, 'dist')
 export const MAIN_DIST = path.join(APP_ROOT, 'dist-electron')

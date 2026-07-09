@@ -1,0 +1,1 @@
+export { createWavConverter } from './wavConverterFactory'

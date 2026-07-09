@@ -12,7 +12,6 @@ import {
   micHandler,
   modelsHandler,
   onboardingHandler,
-  pasteHandler,
   recordingsHandler,
   shortcutsHandler,
   speechToTextHandler,
@@ -45,11 +44,10 @@ llmsHandler(ipcMain, async () => {
 speechToTextHandler(ipcMain, {
   getWidgetWindow: () => widgetWin,
   getServices: () => services,
-  getSelectdModel: () => getSelectedModel(),
+  getSelectedModel: () => getSelectedModel(),
 })
 languagesHandler(ipcMain)
 micHandler(ipcMain)
-pasteHandler(ipcMain)
 const { registerShortcut, unregisterAllShortcuts, ensureDefaultShortcut } = shortcutsHandler(ipcMain, {
   getWindow: () => widgetWin,
   hookService,

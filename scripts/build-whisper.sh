@@ -49,4 +49,10 @@ rm -rf "$RESOURCES_DIR/whisper.cpp"
 mkdir -p "$RESOURCES_DIR/whisper.cpp"
 cp -R build/bin/whisper-server "$RESOURCES_DIR/whisper.cpp/whisper-server"
 
+echo "Downloading Silero VAD model..."
+VAD_DIR="$RESOURCES_DIR/whisper.cpp/vad"
+mkdir -p "$VAD_DIR"
+curl -L -o "$VAD_DIR/ggml-silero-v6.2.0.bin" \
+  "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin"
+
 echo "Successfully built and copied the build folder to $RESOURCES_DIR/whisper.cpp"

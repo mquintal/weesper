@@ -1,8 +1,6 @@
 export {
   copyText,
-  pasteText,
   registerCopyText,
-  registerPasteText,
   registerRecordingChunk,
   registerStartRecording,
   registerStopRecording,

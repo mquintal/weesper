@@ -1,9 +1,8 @@
-import { useMicSettings, useTranscribe } from '@weesper/hooks'
+import { useMicSettings } from '@weesper/hooks'
 import {
   listenForStartRecording,
   listenForStopRecording,
   listenForToggleRecording,
-  pasteText,
   sendRecordingChunk,
   startRecording as startRecordingIpc,
 } from '@weesper/ipc'
@@ -21,31 +20,28 @@ export const useRecordingManager = () => {
   const chunkBytesRef = useRef<number>(0)
 
   const toggleRecording = (shortcutId: string) => {
-    if (transcribing) return
     if (isRecording) {
       setIsRecording(false)
       stopRecording(shortcutId).catch((err) => {
         logger.error('[Recording Manager] Failed to stop recording', { error: err?.message || String(err) })
       })
     } else {
-      startRecording()
+      startRecording(shortcutId)
     }
   }
 
   const toggleRef = useRef(toggleRecording)
   toggleRef.current = toggleRecording
 
-  const startRef = useRef<() => void>(null!)
+  const startRef = useRef<(id: string) => void>(null!)
   const stopRef = useRef<(id: string) => Promise<void>>(null!)
-  const transcribingRef = useRef(false)
 
   useEffect(() => {
     const unsubToggle = listenForToggleRecording(window.ipcRenderer, (shortcutId) => {
       toggleRef.current(shortcutId)
     })
-    const unsubStart = listenForStartRecording(window.ipcRenderer, () => {
-      if (transcribingRef.current) return
-      startRef.current()
+    const unsubStart = listenForStartRecording(window.ipcRenderer, (shortcutId) => {
+      startRef.current(shortcutId)
     })
     const unsubStop = listenForStopRecording(window.ipcRenderer, (shortcutId) => {
       stopRef.current(shortcutId).catch((err) => {
@@ -60,9 +56,8 @@ export const useRecordingManager = () => {
   }, [])
 
   const { micInUse: selectedDeviceId } = useMicSettings()
-  const { transcribe, transcribing } = useTranscribe()
 
-  const startRecording = async () => {
+  const startRecording = async (shortcutId: string) => {
     if (isStartingRef.current) return
     isStartingRef.current = true
 
@@ -91,7 +86,7 @@ export const useRecordingManager = () => {
       streamRef.current = stream
 
       // Start Electron side first
-      const startResult = await startRecordingIpc(window.ipcRenderer)
+      const startResult = await startRecordingIpc(window.ipcRenderer, shortcutId)
       if (startResult.status === 'error') {
         throw new Error(startResult.data.join('\n'))
       }
@@ -142,7 +137,7 @@ export const useRecordingManager = () => {
         }
       }
 
-      mediaRecorder.start(500)
+      mediaRecorder.start(1000)
       startTimestampRef.current = Date.now()
       setIsRecording(true)
 
@@ -155,7 +150,7 @@ export const useRecordingManager = () => {
     }
   }
 
-  const stopRecording = async (shortcutId: string) => {
+  const stopRecording = async () => {
     if (!mediaRecorderRef.current) return
 
     const mediaRecorder = mediaRecorderRef.current
@@ -180,7 +175,7 @@ export const useRecordingManager = () => {
     if (duration < 500) {
       logger.warn('[Recording Manager] Recording was too short, skipping transcription', { durationMs: duration })
       // Tell the main process we finished so it can clean up FFmpeg and exit gracefully
-      await transcribe(shortcutId).catch(() => {})
+      sendRecordingChunk(window.ipcRenderer, null)
       return
     }
 
@@ -189,22 +184,17 @@ export const useRecordingManager = () => {
         try {
           // Wait for all remaining chunks to be processed and sent to IPC first
           await sendQueueRef.current
+          // this will signal the end of the stream to the main process stream handler.
+          sendRecordingChunk(window.ipcRenderer, null)
 
-          logger.info('[MediaRecorder] Data all sent, requesting transcription', {
+          logger.info('[MediaRecorder] Data all sent', {
             totalChunksGenerated: chunkCountRef.current,
             totalBytesGenerated: chunkBytesRef.current,
           })
 
-          const transcribed = await transcribe(shortcutId)
-
-          if (transcribed) {
-            await pasteText(window.ipcRenderer, transcribed)
-          }
-
-          logger.info('Transcription result complete', { textLength: transcribed?.length || 0 })
           resolve()
         } catch (err: any) {
-          logger.error('Error during transcription', { error: err?.message || String(err) })
+          logger.error('Error during stopping recording', { error: err?.message || String(err) })
           reject(err)
         }
       }
@@ -213,10 +203,8 @@ export const useRecordingManager = () => {
     })
   }
 
-  // Refs for start/stop/transcribing are assigned here so the useEffect above can reference them
   startRef.current = startRecording
   stopRef.current = stopRecording
-  transcribingRef.current = transcribing
 
   return { isRecording, stream: streamRef.current }
 }

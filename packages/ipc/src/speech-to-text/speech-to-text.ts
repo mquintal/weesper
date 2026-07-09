@@ -7,17 +7,20 @@ export const TOPICS = {
   START: 'recording/start',
   CHUNK: 'recording/chunk',
   STOP: 'recording/stop',
-  PASTE_TEXT: 'paste-text', // This is also related to speech-to-text result
   COPY_TEXT: 'copy-text',
 } as const
 
-export const registerStartRecording = (ipc: IpcMain, handler: () => boolean | Promise<boolean>) => {
-  ipc.handle(TOPICS.START, async (): Promise<IpcResult<boolean>> => {
-    const result = await handler()
+export const registerStartRecording = (ipc: IpcMain, handler: (shortcutId: string) => boolean | Promise<boolean>) => {
+  ipc.handle(TOPICS.START, async (_, shortcutId: unknown): Promise<IpcResult<boolean>> => {
+    const validatedShortcutId = v.safeParse(v.string(), shortcutId)
+    if (!validatedShortcutId.success) return handleValidationError(validatedShortcutId.issues, shortcutId)
+
+    const result = await handler(validatedShortcutId.output)
     return { status: 'success', data: result }
   })
 }
 
+/** @deprecated Use sendRecordingChunk(ipc, null) to stop in the new stream-based flow */
 export const registerStopRecording = (ipc: IpcMain, handler: (shortcutId: string) => Promise<string>) => {
   ipc.handle(TOPICS.STOP, async (_, shortcutId: unknown): Promise<IpcResult<string>> => {
     const validatedShortcutId = v.safeParse(v.string(), shortcutId)
@@ -37,7 +40,7 @@ export const registerStopRecording = (ipc: IpcMain, handler: (shortcutId: string
 // Note: recording/chunk is sent via ipcRenderer.send, which is fire-and-forget.
 // It's handled by ipcMain.on, not ipcMain.handle.
 // There is no IpcResult for this.
-export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffer) => void) => {
+export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffer | null) => void) => {
   ipc.on(TOPICS.CHUNK, (_, chunk: unknown) => {
     // Print diagnostic type log to trace serialization across platforms
     const typeOfChunk = typeof chunk
@@ -59,6 +62,8 @@ export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffe
       const typedChunk = chunk as ArrayBufferView
       const buf = typedChunk.buffer as ArrayBuffer
       handler(buf.slice(typedChunk.byteOffset, typedChunk.byteOffset + typedChunk.byteLength))
+    } else if (chunk === null) {
+      handler(null)
     } else {
       console.error('[IPC CHUNK TELEMETRY] Silently dropped invalid recording chunk format!', {
         typeOfChunk,
@@ -74,13 +79,14 @@ export const registerRecordingChunk = (ipc: IpcMain, handler: (chunk: ArrayBuffe
 
 // Methods to be used by UI side.
 // --
-export const startRecording = async (ipc: IpcRenderer): Promise<IpcResult<boolean>> => {
-  const result = await ipc.invoke(TOPICS.START)
+export const startRecording = async (ipc: IpcRenderer, shortcutId: string): Promise<IpcResult<boolean>> => {
+  const result = await ipc.invoke(TOPICS.START, shortcutId)
   const validated = v.safeParse(createIpcResultSchema(v.boolean()), result)
   if (!validated.success) return handleValidationError(validated.issues, result)
   return validated.output
 }
 
+/** @deprecated Use sendRecordingChunk(ipc, null) to stop in the new stream-based flow */
 export const stopRecording = async (ipc: IpcRenderer, shortcutId: string): Promise<IpcResult<string>> => {
   const result = await ipc.invoke(TOPICS.STOP, shortcutId)
   const validated = v.safeParse(createIpcResultSchema(v.string()), result)
@@ -88,28 +94,7 @@ export const stopRecording = async (ipc: IpcRenderer, shortcutId: string): Promi
   return validated.output
 }
 
-export const registerPasteText = (ipc: IpcMain, handler: (text: string) => void | Promise<void>) => {
-  ipc.handle(TOPICS.PASTE_TEXT, async (_, text: unknown): Promise<IpcResult<void>> => {
-    const validatedText = v.safeParse(v.string(), text)
-    if (!validatedText.success) return handleValidationError(validatedText.issues, text)
-
-    try {
-      await handler(validatedText.output)
-      return { status: 'success', data: undefined }
-    } catch (err: any) {
-      return { status: 'error', data: [err?.message || 'Failed to paste text'] }
-    }
-  })
-}
-
-export const pasteText = async (ipc: IpcRenderer, text: string): Promise<IpcResult<void>> => {
-  const result = await ipc.invoke(TOPICS.PASTE_TEXT, text)
-  const validated = v.safeParse(createIpcResultSchema(v.undefined()), result)
-  if (!validated.success) return handleValidationError(validated.issues, result)
-  return validated.output
-}
-
-export const sendRecordingChunk = (ipc: IpcRenderer, chunk: ArrayBuffer): void => {
+export const sendRecordingChunk = (ipc: IpcRenderer, chunk: ArrayBuffer | null): void => {
   ipc.send(TOPICS.CHUNK, chunk)
 }
 

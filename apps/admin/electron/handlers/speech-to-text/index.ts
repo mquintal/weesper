@@ -1,110 +1,121 @@
 import { shortcutsRepo } from '@electron/database'
 import type { Model } from '@weesper/ipc'
-import {
-  registerRecordingChunk,
-  registerStartRecording,
-  registerStopRecording,
-  updateWidgetStatus,
-  widgetWindowWillHide,
-} from '@weesper/ipc'
+import { registerRecordingChunk, registerStartRecording, updateWidgetStatus, widgetWindowWillHide } from '@weesper/ipc'
 import { logger } from '@weesper/logger'
 import type { BrowserWindow, IpcMain } from 'electron'
 import { cleanText } from './clean-text'
-import { processAudio } from './process-audio'
+import { pasteHandler } from './pasteHandler'
 import { createRecording, updateEnhancedText, updateTranscription } from './recordings'
+import { createAudioSource } from './source'
+import { createWavConverter } from './wav-converter'
 
-type options = {
+type Options = {
   getWidgetWindow: () => BrowserWindow | undefined
-  getSelectdModel: () => Model | undefined
+  getSelectedModel: () => Model | undefined
   getServices: () => {
     llama: { request: (text: string, prompt: string) => Promise<string> }
     whisper: { request: (wav: Buffer) => Promise<string> }
   }
 }
 
-export const handler = (ipcMain: IpcMain, options: options) => {
-  const { writeChunk, getAudioBuffer, start } = processAudio()
-  registerStartRecording(ipcMain, async () => {
-    try {
+export const handler = (ipcMain: IpcMain, options: Options) => {
+  let isProcessing = false
+  let currentShortcutId: string | undefined
+
+  const source = createAudioSource({
+    onStart: (stream) => {
+      const wavConverterStream = createWavConverter()
+      return stream.pipe(wavConverterStream)
+    },
+    onEnd: async (wavBuffer) => {
       const win = options.getWidgetWindow()
-      win?.showInactive()
-      updateWidgetStatus(win, 'recording')
-      start()
-      return true
-    } catch (err) {
-      console.error('Failed to start recording:', err)
-      updateWidgetStatus(options.getWidgetWindow(), 'error')
-      return false
-    }
-  })
-
-  registerRecordingChunk(ipcMain, (chunk: ArrayBuffer) => {
-    writeChunk(chunk)
-  })
-
-  registerStopRecording(ipcMain, async (shortcutId: string) => {
-    const win = options.getWidgetWindow()
-    try {
-      updateWidgetStatus(win, 'transcribing')
-
-      const wavBuffer = await getAudioBuffer()
-
       if (wavBuffer.length === 0) {
-        logger.info('WAV buffer is empty, exiting gracefully without transcribing')
         updateWidgetStatus(win, 'finished')
         closeWidgetWithDelay(win, 1000)
-        return ''
+        isProcessing = false
+        return
       }
 
-      const selectedModel = options.getSelectdModel()
+      const selectedModel = options.getSelectedModel()
       if (!selectedModel) {
-        throw new Error('Error while loading current model.')
+        logger.error('Error while loading current model.')
+        updateWidgetStatus(win, 'error')
+        closeWidgetWithDelay(win, 2000)
+        isProcessing = false
+        return
       }
 
-      const { whisper, llama } = options.getServices()
-
-      // Step 1: Create recording entry as soon as we have the audio
       let prompt = ''
-      let shortcutVersionId: string | undefined
-      const row = await shortcutsRepo.findById(shortcutId)
-      if (row) {
-        prompt = row.prompt ?? ''
-        shortcutVersionId = row.versionId
-      }
-
-      const recordingIdPromise = createRecording({
-        wavBuffer,
-        selectedModel,
-        shortcutVersionId: shortcutVersionId ?? '',
-      })
-
-      // Step 2: Transcribe and update
-      const rawText = await whisper.request(wavBuffer)
-      const text = cleanText(rawText)
-      const recordingId = await recordingIdPromise
-      if (text) {
-        await updateTranscription(recordingId, text)
-      }
-
-      // Step 3: Enhance and update
-      let enhanced = ''
-      if (prompt && text) {
-        updateWidgetStatus(win, 'enhancing')
-        enhanced = await llama.request(text, prompt)
-        if (enhanced) {
-          await updateEnhancedText(recordingId, enhanced, 'llama')
+      let shortcutVersionId = ''
+      if (currentShortcutId) {
+        const row = await shortcutsRepo.findById(currentShortcutId)
+        if (row) {
+          prompt = row.prompt ?? ''
+          shortcutVersionId = row.versionId
         }
       }
 
-      updateWidgetStatus(win, 'finished')
-      closeWidgetWithDelay(win, 1250)
-      return enhanced || text
-    } catch (err) {
+      try {
+        const recordingId = await createRecording({
+          wavBuffer,
+          selectedModel,
+          shortcutVersionId,
+        })
+
+        updateWidgetStatus(win, 'transcribing')
+        const rawText = await options.getServices().whisper.request(wavBuffer)
+        const text = cleanText(rawText)
+
+        if (text) {
+          await updateTranscription(recordingId, text)
+        }
+
+        let enhanced = ''
+        if (prompt && text) {
+          updateWidgetStatus(win, 'enhancing')
+          enhanced = await options.getServices().llama.request(text, prompt)
+          if (enhanced) {
+            await updateEnhancedText(recordingId, enhanced, 'llama')
+          }
+        }
+
+        const finalText = enhanced || text
+        if (finalText) {
+          await pasteHandler(finalText)
+        }
+
+        updateWidgetStatus(win, 'finished')
+        closeWidgetWithDelay(win, 1250)
+      } catch (err) {
+        logger.error('Error in onEnd pipeline', { error: String(err) })
+        updateWidgetStatus(win, 'error')
+        closeWidgetWithDelay(win, 2000)
+      } finally {
+        isProcessing = false
+      }
+    },
+    onError: (e) => {
+      logger.error('AudioSource error', { error: String(e) })
+      const win = options.getWidgetWindow()
       updateWidgetStatus(win, 'error')
-      // Wait a bit so the user can see the error status if we want, or just hide
       closeWidgetWithDelay(win, 2000)
-      throw err
-    }
+      isProcessing = false
+    },
+  })
+
+  registerStartRecording(ipcMain, async (shortcutId) => {
+    if (isProcessing) return false
+    isProcessing = true
+    currentShortcutId = shortcutId
+
+    const win = options.getWidgetWindow()
+    win?.showInactive()
+    updateWidgetStatus(win, 'recording')
+    return true
+  })
+
+  registerRecordingChunk(ipcMain, (chunk: ArrayBuffer | null) => {
+    source.write(chunk)
   })
 }
 
