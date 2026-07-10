@@ -5,11 +5,12 @@ import {
   listenForToggleRecording,
   sendRecordingChunk,
   startRecording as startRecordingIpc,
+  type WidgetStatus,
 } from '@weesper/ipc'
 import { logger } from '@weesper/logger'
 import { useEffect, useRef, useState } from 'react'
 
-export const useRecordingManager = () => {
+export const useRecordingManager = (status: WidgetStatus) => {
   const [isRecording, setIsRecording] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const sendQueueRef = useRef<Promise<void>>(Promise.resolve())
@@ -22,7 +23,7 @@ export const useRecordingManager = () => {
   const toggleRecording = (shortcutId: string) => {
     if (isRecording) {
       setIsRecording(false)
-      stopRecording(shortcutId).catch((err) => {
+      stopRecording().catch((err) => {
         logger.error('[Recording Manager] Failed to stop recording', { error: err?.message || String(err) })
       })
     } else {
@@ -59,6 +60,7 @@ export const useRecordingManager = () => {
 
   const startRecording = async (shortcutId: string) => {
     if (isStartingRef.current) return
+    if (status === 'transcribing' || status === 'enhancing') return
     isStartingRef.current = true
 
     chunkCountRef.current = 0

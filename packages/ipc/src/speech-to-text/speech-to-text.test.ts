@@ -34,10 +34,21 @@ describe('Speech to Text IPC module', () => {
       expect(mockIpcMain.handle).toHaveBeenCalledWith(TOPICS.START, expect.any(Function))
 
       const callback = mockIpcMain.handle.mock.calls[0][1]
-      const result = await callback({} as IpcMainInvokeEvent)
+      const result = await callback({} as IpcMainInvokeEvent, 'test-shortcut-id')
 
       expect(result.status).toBe('success')
       expect(result.data).toBe(true)
+      expect(mockHandler).toHaveBeenCalledWith('test-shortcut-id')
+    })
+
+    it('registerStartRecording returns error for invalid shortcutId', async () => {
+      const mockHandler = vi.fn().mockResolvedValue(true)
+      registerStartRecording(mockIpcMain, mockHandler)
+
+      const callback = mockIpcMain.handle.mock.calls[0][1]
+      const result = await callback({} as IpcMainInvokeEvent, 123)
+
+      expect(result.status).toBe('error')
     })
 
     it('registerStopRecording registers topic', async () => {
@@ -110,9 +121,9 @@ describe('Speech to Text IPC module', () => {
   describe('Renderer Process callers', () => {
     it('startRecording invokes topic', async () => {
       mockIpcRenderer.invoke.mockResolvedValue({ status: 'success', data: true })
-      const result = await startRecording(mockIpcRenderer)
+      const result = await startRecording(mockIpcRenderer, 'test-shortcut-id')
 
-      expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(TOPICS.START)
+      expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(TOPICS.START, 'test-shortcut-id')
       expect(result.status).toBe('success')
     })
 

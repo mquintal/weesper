@@ -26,8 +26,8 @@ const LABEL: Record<WidgetStatus, string> = {
 }
 
 export const Widget = () => {
-  const { isRecording, stream } = useRecordingManager()
   const { status } = useStatusManagement()
+  const { isRecording, stream } = useRecordingManager(status)
 
   const icon = useMemo(() => {
     switch (status) {
